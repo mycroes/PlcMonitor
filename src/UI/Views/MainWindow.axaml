@@ -1,0 +1,26 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:PlcMonitor.UI.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:PlcMonitor.UI.Views"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="PlcMonitor.UI.Views.MainWindow"
+        Icon="{x:Null}"
+        Background="{x:Null}"
+        Title="PlcMonitor.UI">
+
+    <Window.Styles>
+        <Style Selector="TitleBar:fullscreen">
+        <Setter Property="Background" Value="#7f000000" />
+        </Style>
+    </Window.Styles>
+
+    <Design.DataContext>
+        <vm:MainWindowViewModel/>
+    </Design.DataContext>
+
+    <Panel>
+        <local:MainView />
+    </Panel>
+</Window>
