@@ -1,9 +1,13 @@
 using System;
+using System.Reactive.Disposables;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Markup.Xaml;
 using Avalonia.Platform;
+using Avalonia.ReactiveUI;
+using PlcMonitor.UI.ViewModels;
+using ReactiveUI;
 
 namespace PlcMonitor.UI.Views
 {
