@@ -36,7 +36,7 @@ namespace PlcMonitor.UI.ViewModels
                         Nodes.RemoveRange(e.EventArgs.OldStartingIndex + 1, oldItems.Count);
 
                     if (e.EventArgs.NewItems is {} newItems)
-                        Nodes.InsertRange(newItems.Cast<Plc>().Select(plc => new PlcConnectionNode(projectViewModel, plc)), e.EventArgs.NewStartingIndex + 1);
+                        Nodes.InsertRange(newItems.Cast<IPlc>().Select(plc => new PlcConnectionNode(projectViewModel, plc)), e.EventArgs.NewStartingIndex + 1);
                 }).DisposeWith(disposables);
             });
         }
