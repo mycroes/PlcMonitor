@@ -1,0 +1,22 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="1350" d:DesignHeight="700"
+        x:Class="PlcMonitor.UI.Views.Connection.Configuration.S7ConnectionConfiguration">
+
+    <Grid RowDefinitions="auto,auto,auto,auto" ColumnDefinitions="200,200">
+        <Label Grid.Row="0" Grid.Column="0" Target="PlcName">Name</Label>
+        <TextBox Name="PlcName" Grid.Row="0" Grid.Column="1" Text="{Binding PlcName}" />
+
+        <Label Grid.Row="1" Grid.Column="0" Target="Host">Host</Label>
+        <TextBox Name="Host" Grid.Row="1" Grid.Column="1" Text="{Binding Host}" />
+
+        <Label Grid.Row="2" Grid.Column="0" Target="LocalTsap">Local TSAP</Label>
+        <TextBox Name="LocalTsap" Grid.Row="2" Grid.Column="1" Text="{Binding LocalTsap}" Watermark="A3:01" />
+
+        <Label Grid.Row="3" Grid.Column="0" Target="RemoteTsap">Remote TSAP</Label>
+        <TextBox Name="RemoteTsap" Grid.Row="3" Grid.Column="1" Text="{Binding RemoteTsap}" Watermark="A3:01" />
+    </Grid>
+
+</UserControl>
