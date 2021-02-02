@@ -7,9 +7,17 @@
         x:Class="PlcMonitor.UI.Views.AddConnectionView">
 
     <StackPanel>
-        <ContentControl Content="{Binding Configuration}" />
+        <TabStrip Items="{Binding Configurations}" SelectedItem="{Binding Configuration}">
+            <TabStrip.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Title}" />
+                </DataTemplate>
+            </TabStrip.ItemTemplate>
+        </TabStrip>
 
-        <Button Command="{Binding AddCommand}">Add PLC</Button>
+        <ContentControl Content="{Binding Configuration}" Margin="10" />
+
+        <Button Command="{Binding AddCommand}" Margin="10">Add connection</Button>
     </StackPanel>
 
 </UserControl>

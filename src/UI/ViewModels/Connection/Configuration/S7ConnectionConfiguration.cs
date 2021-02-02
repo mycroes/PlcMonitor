@@ -9,6 +9,8 @@ namespace PlcMonitor.UI.ViewModels.Connection.Configuration
 {
     public class S7ConnectionConfiguration : ValidatableViewModelBase, IConnectionConfiguration
     {
+        public string Title { get; } = "S7";
+
         private string? _name;
         public string? Name
         {

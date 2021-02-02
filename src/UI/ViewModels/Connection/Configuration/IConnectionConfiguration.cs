@@ -6,6 +6,7 @@ namespace PlcMonitor.UI.ViewModels.Connection.Configuration
 {
     public interface IConnectionConfiguration : IReactiveObject, IValidatableViewModel
     {
+        string Title { get; }
         IPlc CreatePlc();
     }
 }

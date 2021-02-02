@@ -52,6 +52,7 @@ namespace PlcMonitor.UI.ViewModels.Explorer
 
         private IEnumerable<IConnectionConfiguration> BuildConfigurations()
         {
+            yield return new ModbusConnectionConfiguration();
             yield return new S7ConnectionConfiguration();
         }
     }

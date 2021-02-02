@@ -1,0 +1,22 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="1350" d:DesignHeight="700"
+        x:Class="PlcMonitor.UI.Views.Connection.Configuration.ModbusConnectionConfiguration">
+
+    <Grid RowDefinitions="38,38,38,38" ColumnDefinitions="200,200">
+        <Label Grid.Row="0" Grid.Column="0" Target="Name">Name</Label>
+        <TextBox x:Name="Name" Grid.Row="0" Grid.Column="1" Text="{Binding Name}" />
+
+        <Label Grid.Row="1" Grid.Column="0" Target="Host">Host</Label>
+        <TextBox x:Name="Host" Grid.Row="1" Grid.Column="1" Text="{Binding Host}" />
+
+        <Label Grid.Row="2" Grid.Column="0" Target="Port">Port</Label>
+        <TextBox x:Name="Port" Grid.Row="2" Grid.Column="1" Text="{Binding Port}" Watermark="502" />
+
+        <Label Grid.Row="3" Grid.Column="0" Target="UnitId">Unit ID</Label>
+        <TextBox x:Name="UnitId" Grid.Row="3" Grid.Column="1" Text="{Binding UnitId}" />
+    </Grid>
+
+</UserControl>
