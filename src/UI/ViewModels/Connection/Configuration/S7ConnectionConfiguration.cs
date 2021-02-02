@@ -61,10 +61,13 @@ namespace PlcMonitor.UI.ViewModels.Connection.Configuration
                 return int.TryParse(input, System.Globalization.NumberStyles.HexNumber, null, out _);
             }
 
+            const string separators = ".,:-";
+
             if (input.Length == 5)
             {
                 return byte.TryParse(input.AsSpan().Slice(0, 2), NumberStyles.HexNumber, null, out _)
-                    && byte.TryParse(input.AsSpan().Slice(3, 2), NumberStyles.HexNumber, null, out _);
+                    && byte.TryParse(input.AsSpan().Slice(3, 2), NumberStyles.HexNumber, null, out _)
+                    && separators.Contains(input[2], StringComparison.InvariantCulture);
             }
 
             return false;
