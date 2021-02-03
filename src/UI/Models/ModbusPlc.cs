@@ -14,5 +14,10 @@ namespace PlcMonitor.UI.Models
             Port = port;
             UnitId = unitId;
         }
+
+        public IPlcConnection CreateConnection()
+        {
+            return new ModbusPlcConnection(Host, Port, UnitId);
+        }
     }
 }
