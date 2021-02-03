@@ -5,6 +5,18 @@
         xmlns:rxui="http://reactiveui.net"
         mc:Ignorable="d" d:DesignWidth="1350" d:DesignHeight="700"
         x:Class="PlcMonitor.UI.Views.AddConnectionView">
+    <UserControl.Styles>
+        <Style Selector="CheckBox.Connectivity">
+            <Setter Property="IsVisible" Value="False" />
+            <Setter Property="IsHitTestVisible" Value="False" />
+        </Style>
+        <Style Selector="CheckBox.Connectivity[IsChecked=true]">
+            <Setter Property="IsVisible" Value="True" />
+        </Style>
+        <Style Selector="CheckBox.Connectivity[IsChecked=false]">
+            <Setter Property="IsVisible" Value="True" />
+        </Style>
+    </UserControl.Styles>
 
     <StackPanel>
         <TabStrip Items="{Binding Configurations}" SelectedItem="{Binding Configuration}">
@@ -17,7 +29,12 @@
 
         <ContentControl Content="{Binding Configuration}" Margin="10" />
 
-        <Button Command="{Binding AddCommand}" Margin="10">Add connection</Button>
+        <StackPanel Orientation="Horizontal">
+            <Button Command="{Binding AddCommand}" Margin="10">Add connection</Button>
+            <Button Command="{Binding TestCommand}" Margin="10">Test connection</Button>
+
+            <CheckBox Classes="Connectivity" IsChecked="{Binding TestResult^}" />
+        </StackPanel>
     </StackPanel>
 
 </UserControl>
