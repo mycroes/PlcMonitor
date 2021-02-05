@@ -12,14 +12,30 @@ namespace PlcMonitor.UI.Services
     {
         public ProjectViewModel MapFromStorage(Project project)
         {
-            var res = new ProjectViewModel();
-            //res.Plcs.AddRange(project.Plcs.Map())
-            return res;
+            return new ProjectViewModel(project.Plcs.Select(MapFromStorage));
         }
 
         public Project MapToStorage(ProjectViewModel project)
         {
             return new Project(project.Plcs.Select(MapToStorage));
+        }
+
+        private static PlcViewModel MapFromStorage(PlcConfiguration plc)
+        {
+            return new PlcViewModel ( plc.Plc, plc.Name, plc.Variables.Select(MapFromStorage));
+        }
+
+        private static VariableViewModel MapFromStorage(Variable variable)
+        {
+            return new VariableViewModel(variable.Address, variable.Type, variable.Length, MapFromStorage(variable.Value));
+        }
+
+        private static ReceivedValue? MapFromStorage(VariableValue? value)
+        {
+            if (value == null) return null;
+
+            // TODO fix value reading
+            return new ReceivedValue(value.RawValue, value.LastChange);
         }
 
         private static PlcConfiguration MapToStorage(PlcViewModel plc)
@@ -37,6 +53,7 @@ namespace PlcMonitor.UI.Services
             if (value == null) return null;
 
             // TODO implement last change
+            // TODO storage value as JSON, include type
             return new VariableValue(SerializeValue(value.Value), value.Timestamp, value.Timestamp);
         }
 

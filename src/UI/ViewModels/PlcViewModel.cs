@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Reactive;
 using System.Threading.Tasks;
 using DynamicData.Binding;
@@ -27,6 +28,12 @@ namespace PlcMonitor.UI.ViewModels
             Variables.Add(new VariableViewModel { Address = "DB1,INT5" });
 
             ReadCommand = ReactiveCommand.CreateFromTask(Read);
+        }
+
+        public PlcViewModel(IPlc plc, string name, IEnumerable<VariableViewModel> variables)
+            : this(plc, name)
+        {
+            Variables.AddRange(variables);
         }
 
         private Task Read()
