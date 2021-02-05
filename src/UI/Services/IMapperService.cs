@@ -1,11 +1,11 @@
 using System.Collections.Generic;
 using PlcMonitor.UI.Models.Storage;
-using PlcMonitor.UI.ViewModels.Explorer;
+using PlcMonitor.UI.ViewModels;
 
 namespace PlcMonitor.UI.Services
 {
     public interface IMapperService
     {
-        Project MapToStorage(IEnumerable<PlcConnectionNode> plcs);
+        Project MapToStorage(ProjectViewModel project);
     }
 }

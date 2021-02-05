@@ -2,34 +2,29 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using PlcMonitor.UI.Models;
 using PlcMonitor.UI.Models.PlcData;
 using PlcMonitor.UI.Models.Storage;
 using PlcMonitor.UI.ViewModels;
-using PlcMonitor.UI.ViewModels.Explorer;
 
 namespace PlcMonitor.UI.Services
 {
     public class MapperService : IMapperService
     {
-        public Project MapToStorage(IEnumerable<PlcConnectionNode> plcs)
+        public ProjectViewModel MapFromStorage(Project project)
         {
-            return new Project(plcs.Select(MapToStorage));
+            var res = new ProjectViewModel();
+            //res.Plcs.AddRange(project.Plcs.Map())
+            return res;
         }
 
-        private static PlcType GetPlcType(IPlc plc)
+        public Project MapToStorage(ProjectViewModel project)
         {
-            return plc switch
-            {
-                ModbusPlc _ => PlcType.Modbus,
-                S7Plc _ => PlcType.S7,
-                _ => throw new ArgumentException($"Unsupported PLC {plc}.", nameof(plc))
-            };
+            return new Project(project.Plcs.Select(MapToStorage));
         }
 
-        private static Plc MapToStorage(PlcConnectionNode plc)
+        private static PlcConfiguration MapToStorage(PlcViewModel plc)
         {
-            return new Plc(plc.Name, GetPlcType(plc.Plc), plc.Variables.Select(MapToStorage));
+            return new PlcConfiguration(plc.Name, plc.Plc, plc.Variables.Select(MapToStorage));
         }
 
         private static Variable MapToStorage(VariableViewModel variable)

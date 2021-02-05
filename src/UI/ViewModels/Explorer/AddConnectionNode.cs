@@ -20,17 +20,17 @@ namespace PlcMonitor.UI.ViewModels.Explorer
         public ReactiveCommand<Unit, Unit> AddCommand { get; }
         public ReactiveCommand<Unit, bool> TestCommand { get; }
 
-        private IConnectionConfiguration? _configuration;
+        private ConnectionConfigurationBase? _configuration;
 
-        public IConnectionConfiguration? Configuration
+        public ConnectionConfigurationBase? Configuration
         {
             get => _configuration;
             set => this.RaiseAndSetIfChanged(ref _configuration, value);
         }
 
-        private IReadOnlyList<IConnectionConfiguration> _configurations;
+        private IReadOnlyList<ConnectionConfigurationBase> _configurations;
 
-        public IReadOnlyList<IConnectionConfiguration> Configurations
+        public IReadOnlyList<ConnectionConfigurationBase> Configurations
         {
             get => _configurations;
             set => this.RaiseAndSetIfChanged(ref _configurations, value);
@@ -62,7 +62,7 @@ namespace PlcMonitor.UI.ViewModels.Explorer
 
         private void Add()
         {
-            _project.Plcs.Add(Configuration!.CreatePlc());
+            _project.Plcs.Add(new PlcViewModel(Configuration!.CreatePlc(), Configuration!.Name!));
 
             Configurations = BuildConfigurations().ToList();
             Configuration = Configurations.First();
@@ -83,7 +83,7 @@ namespace PlcMonitor.UI.ViewModels.Explorer
             }
         }
 
-        private IEnumerable<IConnectionConfiguration> BuildConfigurations()
+        private IEnumerable<ConnectionConfigurationBase> BuildConfigurations()
         {
             yield return new ModbusConnectionConfiguration();
             yield return new S7ConnectionConfiguration();

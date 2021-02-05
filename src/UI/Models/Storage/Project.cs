@@ -4,9 +4,9 @@ namespace PlcMonitor.UI.Models.Storage
 {
     public class Project
     {
-        public IEnumerable<Plc> Plcs { get; }
+        public IEnumerable<PlcConfiguration> Plcs { get; }
 
-        public Project(IEnumerable<Plc> plcs)
+        public Project(IEnumerable<PlcConfiguration> plcs)
         {
             Plcs = plcs;
         }

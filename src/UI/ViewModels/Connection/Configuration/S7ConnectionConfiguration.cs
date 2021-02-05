@@ -7,16 +7,9 @@ using Sally7.Protocol.Cotp;
 
 namespace PlcMonitor.UI.ViewModels.Connection.Configuration
 {
-    public class S7ConnectionConfiguration : ValidatableViewModelBase, IConnectionConfiguration
+    public class S7ConnectionConfiguration : ConnectionConfigurationBase
     {
-        public string Title { get; } = "S7";
-
-        private string? _name;
-        public string? Name
-        {
-            get => _name;
-            set => this.RaiseAndSetIfChanged(ref _name, value);
-        }
+        public override string Title { get; } = "S7";
 
         private string? _host;
         public string? Host
@@ -41,15 +34,14 @@ namespace PlcMonitor.UI.ViewModels.Connection.Configuration
 
         public S7ConnectionConfiguration()
         {
-            this.ValidationRule(x => x.Name, x => !string.IsNullOrWhiteSpace(x), "Name must be set");
             this.ValidationRule(x => x.Host, x => !string.IsNullOrWhiteSpace(x), "Host must be set");
             this.ValidationRule(x => x.LocalTsap, IsValidTsap, "Local TSAP must be in the format 3A:01");
             this.ValidationRule(x => x.RemoteTsap, IsValidTsap, "Remote TSAP must be in the format 3A:01");
         }
 
-        public IPlc CreatePlc()
+        public override IPlc CreatePlc()
         {
-            return new S7Plc(Name!, Host!, ParseTsap(LocalTsap!), ParseTsap(RemoteTsap!));
+            return new S7Plc(Host!, ParseTsap(LocalTsap!), ParseTsap(RemoteTsap!));
         }
 
         private bool IsValidTsap(string? input)
