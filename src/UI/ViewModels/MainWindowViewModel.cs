@@ -1,55 +1,74 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Reactive.Disposables;
-using DynamicData.Binding;
-using PlcMonitor.UI.Models;
-using PlcMonitor.UI.ViewModels.Explorer;
+using System.Reactive;
+using System.Reactive.Linq;
+using System.Threading.Tasks;
+using Avalonia.Controls;
+using PlcMonitor.UI.Services;
+using PlcMonitor.UI.Views;
 using ReactiveUI;
+using Splat;
 
 namespace PlcMonitor.UI.ViewModels
 {
-    public class MainWindowViewModel : ViewModelBase, IActivatableViewModel
+    public class MainWindowViewModel : ViewModelBase
     {
-        public ObservableCollectionExtended<IExplorerNode> Nodes { get; } = new ObservableCollectionExtended<IExplorerNode>();
+        private ProjectViewModel _project;
+        public ProjectViewModel Project
+        {
+            get => _project;
+            private set => this.RaiseAndSetIfChanged(ref _project, value);
+        }
 
-        public ViewModelActivator Activator { get; } = new ViewModelActivator();
-
-        public OverviewNode OverviewNode { get; }
-        public AddConnectionNode AddConnectionNode { get; }
-
-        public ProjectViewModel ProjectViewModel { get; }
+        public ReactiveCommand<Unit, Unit> LoadCommand { get; }
+        public ReactiveCommand<Unit, Unit> SaveCommand { get; }
 
         public MainWindowViewModel(ProjectViewModel projectViewModel)
         {
-            ProjectViewModel = projectViewModel;
+            _project = projectViewModel;
 
-            OverviewNode = new OverviewNode();
-            AddConnectionNode = new AddConnectionNode(projectViewModel);
-
-            BuildNodes();
-
-            this.WhenActivated(disposables =>
-            {
-                projectViewModel.Plcs.ObserveCollectionChanges().Subscribe(e => {
-                    if (e.EventArgs.OldItems is {} oldItems)
-                        Nodes.RemoveRange(e.EventArgs.OldStartingIndex + 1, oldItems.Count);
-
-                    if (e.EventArgs.NewItems is {} newItems)
-                        Nodes.InsertRange(newItems.Cast<PlcViewModel>().Select(plc => new PlcConnectionNode(projectViewModel, plc)), e.EventArgs.NewStartingIndex + 1);
-                }).DisposeWith(disposables);
-            });
+            LoadCommand = ReactiveCommand.CreateFromTask(Load);
+            SaveCommand = ReactiveCommand.CreateFromTask(Save);
         }
 
-        private void BuildNodes()
+        private async Task Load()
         {
-            using (Nodes.SuspendNotifications())
-            {
-                Nodes.Clear();
-                Nodes.Add(OverviewNode);
-                Nodes.AddRange(ProjectViewModel.Plcs.Select(plc => new PlcConnectionNode(ProjectViewModel, plc)));
-                Nodes.Add(AddConnectionNode);
-            }
+            var mapper = Locator.Current.GetService<IMapperService>();
+            var storage = Locator.Current.GetService<IStorageService>();
+            var mainWindow = Locator.Current.GetService<MainWindow>();
+
+            var dialog = new OpenFileDialog() {
+                Filters = GetFileFilters(),
+                AllowMultiple = false
+            };
+
+            var fileNames = await dialog.ShowAsync(mainWindow);
+            if (fileNames?.FirstOrDefault() == null) return;
+
+            var project = mapper.MapFromStorage(await storage.Load(fileNames[0]));
+            Project = project;
+        }
+
+        private async Task Save()
+        {
+            var mapper = Locator.Current.GetService<IMapperService>();
+            var storage = Locator.Current.GetService<IStorageService>();
+            var mainWindow = Locator.Current.GetService<MainWindow>();
+
+            var dialog = new SaveFileDialog() {
+                DefaultExtension = ".plcson",
+                Filters = GetFileFilters()
+            };
+
+            var fileName = await dialog.ShowAsync(mainWindow);
+            if (fileName == null) return;
+
+            await storage.Save(mapper.MapToStorage(Project), fileName);
+        }
+
+        private static List<FileDialogFilter> GetFileFilters()
+        {
+            return new() { new() { Name = "PlcMonitor files", Extensions = new() { ".plcson" } } };
         }
     }
 }

@@ -2,8 +2,6 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:vm="clr-namespace:PlcMonitor.UI.ViewModels.Explorer"
-        xmlns:views="clr-namespace:PlcMonitor.UI.Views"
         mc:Ignorable="d" d:DesignWidth="1350" d:DesignHeight="700"
         x:Class="PlcMonitor.UI.Views.MainView"
         FontSize="14"
@@ -11,6 +9,11 @@
 
     <Panel>
         <DockPanel HorizontalAlignment="Stretch">
+            <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
+                <Button Command="{Binding SaveCommand}">Save</Button>
+                <Button Command="{Binding LoadCommand}">Load</Button>
+            </StackPanel>
+
             <ExperimentalAcrylicBorder DockPanel.Dock="Left" Width="240" IsHitTestVisible="False">
                 <ExperimentalAcrylicBorder.Material>
                     <ExperimentalAcrylicMaterial TintColor="Black" MaterialOpacity="0.85" TintOpacity="1" />
@@ -26,26 +29,6 @@
             </ExperimentalAcrylicBorder>
         </DockPanel>
 
-        <TabControl x:Name="TabControl" Classes="sidebar" Margin="0 40 0 20" Items="{Binding Nodes}" Padding="20">
-            <TabControl.ItemTemplate>
-                <DataTemplate>
-                    <TextBlock Text="{Binding Name}" />
-                </DataTemplate>
-            </TabControl.ItemTemplate>
-            <TabControl.DataTemplates>
-                <DataTemplate DataType="{x:Type vm:OverviewNode}">
-                    <TextBlock>Overview</TextBlock>
-                </DataTemplate>
-                <DataTemplate DataType="{x:Type vm:AddConnectionNode}">
-                    <views:AddConnectionView />
-                </DataTemplate>
-                <DataTemplate DataType="{x:Type vm:PlcConnectionNode}">
-                    <views:PlcConnectionView />
-                </DataTemplate>
-            </TabControl.DataTemplates>
-            <TabControl.Styles>
-                <StyleInclude Source="/Styles/SideBar.axaml" />
-            </TabControl.Styles>
-        </TabControl>
+        <ContentControl Content="{Binding Project}" />
     </Panel>
 </UserControl>
