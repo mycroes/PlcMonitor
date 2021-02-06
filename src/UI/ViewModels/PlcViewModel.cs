@@ -24,9 +24,6 @@ namespace PlcMonitor.UI.ViewModels
             Plc = plc;
             Name = name;
 
-            Variables.Add(new VariableViewModel { Address = "DB1,INT2" });
-            Variables.Add(new VariableViewModel { Address = "DB1,INT5" });
-
             ReadCommand = ReactiveCommand.CreateFromTask(Read);
         }
 
