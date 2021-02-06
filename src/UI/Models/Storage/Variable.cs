@@ -8,14 +8,14 @@ namespace PlcMonitor.UI.Models.Storage
 
         public int Length { get; }
 
-        public VariableValue? Value { get; }
+        public VariableState? State { get; }
 
-        public Variable(string address, string type, int length, VariableValue? value)
+        public Variable(string address, string type, int length, VariableState? state)
         {
             Address = address;
             Type = type;
             Length = length;
-            Value = value;
+            State = state;
         }
     }
 }

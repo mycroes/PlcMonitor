@@ -40,7 +40,7 @@ namespace PlcMonitor.UI.ViewModels
         {
             foreach (var variable in Variables)
             {
-                variable.Value.OnNext(new ReceivedValue(new Random().Next(), DateTimeOffset.Now));
+                variable.PushValue(new ReceivedValue(new Random().Next(3), DateTimeOffset.Now));
             }
 
             return Task.CompletedTask;

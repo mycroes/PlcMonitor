@@ -14,5 +14,15 @@ namespace PlcMonitor.UI.Models.Storage
             IsArray = isArray;
             Value = value;
         }
+
+        public ValueWithTypeCode(object value)
+        {
+            var type = value.GetType();
+            IsArray = type.IsArray;
+            if (IsArray) type = type.GetElementType()!;
+
+            TypeCode = Type.GetTypeCode(type);
+            Value = value;
+        }
     }
 }
