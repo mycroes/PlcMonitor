@@ -9,7 +9,15 @@ namespace PlcMonitor.UI.DI
     {
         public static void Initialize(IMutableDependencyResolver locator, IReadonlyDependencyResolver resolver)
         {
-            var jsonSerializerOptions = new JsonSerializerOptions { Converters = { new PlcJsonConverter(), new TsapJsonConverter() }};
+            var jsonSerializerOptions = new JsonSerializerOptions
+            {
+                Converters =
+                {
+                    new PlcJsonConverter(),
+                    new TsapJsonConverter(),
+                    new ValueWithTypeCodeJsonConverter()
+                }
+            };
 
             locator.Register<IStorageService>(() => new StorageService(jsonSerializerOptions));
             locator.Register<IMapperService>(() => new MapperService());
