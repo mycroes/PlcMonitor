@@ -9,8 +9,10 @@
     <StackPanel>
         <TextBlock>PLC Node</TextBlock>
         <TextBlock Text="{Binding Name}" />
+
+        <ContentControl Content="{Binding Plc}" />
+
         <Button Command="{Binding DeleteCommand}">Delete PLC</Button>
     </StackPanel>
-
 
 </UserControl>
