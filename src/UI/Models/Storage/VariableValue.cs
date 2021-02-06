@@ -4,13 +4,13 @@ namespace PlcMonitor.UI.Models.Storage
 {
     public class VariableValue
     {
-        public byte[] RawValue { get; }
+        public ValueWithTypeCode Value { get; }
         public DateTimeOffset LastChange { get; }
         public DateTimeOffset LastRead { get; }
 
-        public VariableValue(byte[] rawValue, DateTimeOffset lastChange, DateTimeOffset lastRead)
+        public VariableValue(ValueWithTypeCode value, DateTimeOffset lastChange, DateTimeOffset lastRead)
         {
-            RawValue = rawValue;
+            Value = value;
             LastChange = lastChange;
             LastRead = lastRead;
         }

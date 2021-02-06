@@ -35,7 +35,7 @@ namespace PlcMonitor.UI.Services
             if (value == null) return null;
 
             // TODO fix value reading
-            return new ReceivedValue(value.RawValue, value.LastChange);
+            return new ReceivedValue(value.Value.Value, value.LastChange);
         }
 
         private static PlcConfiguration MapToStorage(PlcViewModel plc)
@@ -53,28 +53,16 @@ namespace PlcMonitor.UI.Services
             if (value == null) return null;
 
             // TODO implement last change
-            // TODO storage value as JSON, include type
             return new VariableValue(SerializeValue(value.Value), value.Timestamp, value.Timestamp);
         }
 
-        private static byte[] SerializeValue(object value)
+        private static ValueWithTypeCode SerializeValue(object value)
         {
-            return value switch
-            {
-                long v => BitConverter.GetBytes(v),
-                ulong v => BitConverter.GetBytes(v),
-                double v => BitConverter.GetBytes(v),
-                int v => BitConverter.GetBytes(v),
-                uint v => BitConverter.GetBytes(v),
-                float v => BitConverter.GetBytes(v),
-                short v => BitConverter.GetBytes(v),
-                ushort v => BitConverter.GetBytes(v),
-                byte v => new[] { v },
-                sbyte v => new[] { unchecked((byte)v) },
-                bool v => new byte[] { v ? 1 : 0 },
-                string v => Encoding.UTF8.GetBytes(v),
-                _ => throw new ArgumentOutOfRangeException()
-            };
+            var type = value.GetType();
+            var isArray = type.IsArray;
+            if (isArray) type = type.GetElementType()!;
+
+            return new ValueWithTypeCode(Type.GetTypeCode(type), isArray, value);
         }
     }
 }
