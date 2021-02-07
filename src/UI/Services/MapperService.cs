@@ -1,4 +1,5 @@
 using System.Linq;
+using PlcMonitor.UI.Models;
 using PlcMonitor.UI.Models.Storage;
 using PlcMonitor.UI.ViewModels;
 
@@ -18,12 +19,14 @@ namespace PlcMonitor.UI.Services
 
         private static PlcViewModel MapFromStorage(PlcConfiguration plc)
         {
-            return new PlcViewModel ( plc.Plc, plc.Name, plc.Variables.Select(MapFromStorage));
+            var res = new PlcViewModel ( plc.Plc, plc.Name, plc.Variables.Select(v => MapFromStorage(plc.Plc, v)) );
+
+            return res;
         }
 
-        private static VariableViewModel MapFromStorage(Variable variable)
+        private static VariableViewModel MapFromStorage(IPlc plc, Variable variable)
         {
-            return new VariableViewModel(variable.Address, variable.Type, variable.Length, MapFromStorage(variable.State));
+            return new VariableViewModel(plc, variable.Address, variable.Type, variable.Length, MapFromStorage(variable.State));
         }
 
         private static VariableStateViewModel? MapFromStorage(VariableState? state)

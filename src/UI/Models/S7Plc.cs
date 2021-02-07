@@ -19,5 +19,10 @@ namespace PlcMonitor.UI.Models
         {
             return new S7Connection(Host, SourceTsap, DestinationTsap);
         }
+
+        public bool IsValidAddress(string address)
+        {
+            return S7.Address.TryParse(address, out _, out _, out _, out _);
+        }
     }
 }
