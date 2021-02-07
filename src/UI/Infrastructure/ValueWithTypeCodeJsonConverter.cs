@@ -46,24 +46,7 @@ namespace PlcMonitor.UI.Infrastructure
         {
             if (isArray) return GetValueType(typeCode, false).MakeArrayType();
 
-            return typeCode switch
-            {
-                TypeCode.Boolean => typeof(bool),
-                TypeCode.Byte => typeof(byte),
-                TypeCode.Char => typeof(char),
-                TypeCode.DateTime => typeof(DateTime),
-                TypeCode.Double => typeof(double),
-                TypeCode.Int16 => typeof(short),
-                TypeCode.Int32 => typeof(int),
-                TypeCode.Int64 => typeof(long),
-                TypeCode.SByte => typeof(sbyte),
-                TypeCode.Single => typeof(float),
-                TypeCode.String => typeof(string),
-                TypeCode.UInt16 => typeof(ushort),
-                TypeCode.UInt32 => typeof(uint),
-                TypeCode.UInt64 => typeof(ulong),
-                _ => throw new ArgumentException($"Unsupported {nameof(TypeCode)} {typeCode} while attempting to read stored value.")
-            };
+            return TypeCodeLookup.TypeCodeToType(typeCode);
         }
     }
 }
