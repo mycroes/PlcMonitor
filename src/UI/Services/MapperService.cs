@@ -26,7 +26,7 @@ namespace PlcMonitor.UI.Services
 
         private static VariableViewModel MapFromStorage(IPlc plc, Variable variable)
         {
-            return new VariableViewModel(plc, variable.Address, variable.Type, variable.Length, MapFromStorage(variable.State));
+            return new VariableViewModel(plc, variable.Address, variable.TypeCode, variable.Length, MapFromStorage(variable.State));
         }
 
         private static VariableStateViewModel? MapFromStorage(VariableState? state)
@@ -43,7 +43,7 @@ namespace PlcMonitor.UI.Services
 
         private static Variable MapToStorage(VariableViewModel variable)
         {
-            return new Variable(variable.Address, variable.Type, variable.Length, MapToStorage(variable.State));
+            return new Variable(variable.Address, variable.TypeCode, variable.Length, MapToStorage(variable.State));
         }
 
         private static VariableState? MapToStorage(VariableStateViewModel? state)

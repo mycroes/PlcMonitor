@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using PlcMonitor.UI.Models;
 using PlcMonitor.UI.Models.PlcData;
@@ -17,11 +18,11 @@ namespace PlcMonitor.UI.ViewModels
             set => this.RaiseAndSetIfChanged(ref _address, value);
         }
 
-        private string _type;
-        public string Type
+        private TypeCode _typeCode;
+        public TypeCode TypeCode
         {
-            get => _type;
-            set => this.RaiseAndSetIfChanged(ref _type, value);
+            get => _typeCode;
+            set => this.RaiseAndSetIfChanged(ref _typeCode, value);
         }
 
         private int _length;
@@ -38,15 +39,15 @@ namespace PlcMonitor.UI.ViewModels
             set => this.RaiseAndSetIfChanged(ref _state, value);
         }
 
-        public VariableViewModel(IPlc plc) : this(plc, string.Empty, string.Empty, 1, default)
+        public VariableViewModel(IPlc plc) : this(plc, string.Empty, default, 1, default)
         {
         }
 
-        public VariableViewModel(IPlc plc, string address, string type, int length, VariableStateViewModel? state)
+        public VariableViewModel(IPlc plc, string address, TypeCode typeCode, int length, VariableStateViewModel? state)
         {
             _plc = plc;
             _address = address;
-            _type = type;
+            _typeCode = typeCode;
             _length = length;
             _state = state;
 
