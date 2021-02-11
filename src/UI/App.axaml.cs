@@ -1,3 +1,4 @@
+using System.Linq;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
@@ -23,7 +24,8 @@ namespace PlcMonitor.UI
 
                 desktop.MainWindow = new MainWindow
                 {
-                    DataContext = new MainWindowViewModel(new ProjectViewModel()),
+                    DataContext = new MainWindowViewModel(
+                        Locator.Current.GetService<ProjectViewModelFactory>().Invoke(Enumerable.Empty<PlcViewModel>())),
                 };
 
                 Locator.CurrentMutable.RegisterConstant((MainWindow) desktop.MainWindow);

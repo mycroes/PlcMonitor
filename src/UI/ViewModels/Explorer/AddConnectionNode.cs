@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
+using PlcMonitor.UI.DI;
 using PlcMonitor.UI.ViewModels.Connection.Configuration;
 using ReactiveUI;
 using ReactiveUI.Validation.Extensions;
@@ -14,6 +15,7 @@ namespace PlcMonitor.UI.ViewModels.Explorer
     public class AddConnectionNode : ReactiveObject, IExplorerNode
     {
         private readonly ProjectViewModel _project;
+        private readonly PlcViewModelFactory _plcViewModelFactory;
 
         public string Name { get; } = "Add connection";
 
@@ -38,9 +40,10 @@ namespace PlcMonitor.UI.ViewModels.Explorer
 
         public IObservable<bool?> TestResult { get; }
 
-        public AddConnectionNode(ProjectViewModel project)
+        public AddConnectionNode(ProjectViewModel project, PlcViewModelFactory plcViewModelFactory)
         {
             _project = project;
+            _plcViewModelFactory = plcViewModelFactory;
 
             _configurations = BuildConfigurations().ToList();
             _configuration = _configurations.First();
@@ -62,7 +65,8 @@ namespace PlcMonitor.UI.ViewModels.Explorer
 
         private void Add()
         {
-            _project.Plcs.Add(new PlcViewModel(Configuration!.CreatePlc(), Configuration!.Name!));
+            _project.Plcs.Add(_plcViewModelFactory.Invoke(
+                Configuration!.CreatePlc(), Configuration!.Name!, Enumerable.Empty<VariableViewModel>()));
 
             Configurations = BuildConfigurations().ToList();
             Configuration = Configurations.First();

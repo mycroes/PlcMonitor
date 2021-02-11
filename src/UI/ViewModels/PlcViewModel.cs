@@ -11,6 +11,8 @@ namespace PlcMonitor.UI.ViewModels
 {
     public class PlcViewModel : ViewModelBase
     {
+        private readonly IPlcInteractionManager _plcInteractionManager;
+
         public string Name { get; }
 
         public IPlc Plc { get;}
@@ -19,16 +21,17 @@ namespace PlcMonitor.UI.ViewModels
 
         public ReactiveCommand<Unit, Unit> ReadCommand { get; }
 
-        public PlcViewModel(IPlc plc, string name)
+        public PlcViewModel(IPlc plc, string name, IPlcInteractionManager plcInteractionManager)
         {
+            _plcInteractionManager = plcInteractionManager;
             Plc = plc;
             Name = name;
 
             ReadCommand = ReactiveCommand.CreateFromTask(Read);
         }
 
-        public PlcViewModel(IPlc plc, string name, IEnumerable<VariableViewModel> variables)
-            : this(plc, name)
+        public PlcViewModel(IPlc plc, string name, IEnumerable<VariableViewModel> variables, IPlcInteractionManager plcInteractionManager)
+            : this(plc, name, plcInteractionManager)
         {
             Variables.AddRange(variables);
         }

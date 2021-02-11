@@ -6,6 +6,7 @@ using DynamicData.Binding;
 using PlcMonitor.UI.ViewModels.Explorer;
 using ReactiveUI;
 using System.Collections.Generic;
+using PlcMonitor.UI.DI;
 
 namespace PlcMonitor.UI.ViewModels
 {
@@ -20,10 +21,10 @@ namespace PlcMonitor.UI.ViewModels
 
         public ObservableCollectionExtended<PlcViewModel> Plcs { get; } = new ObservableCollectionExtended<PlcViewModel>();
 
-        public ProjectViewModel()
+        public ProjectViewModel(AddConnectionNodeFactory addConnectionNodeFactory)
         {
             OverviewNode = new OverviewNode();
-            AddConnectionNode = new AddConnectionNode(this);
+            AddConnectionNode = addConnectionNodeFactory.Invoke(this);
 
             this.WhenActivated(disposables =>
             {
@@ -40,8 +41,8 @@ namespace PlcMonitor.UI.ViewModels
             });
         }
 
-        public ProjectViewModel(IEnumerable<PlcViewModel> plcs)
-            : this()
+        public ProjectViewModel(IEnumerable<PlcViewModel> plcs, AddConnectionNodeFactory addConnectionNodeFactory)
+            : this(addConnectionNodeFactory)
         {
             Plcs.AddRange(plcs);
         }

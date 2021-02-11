@@ -1,4 +1,6 @@
+using System;
 using System.Linq;
+using PlcMonitor.UI.DI;
 using PlcMonitor.UI.Models;
 using PlcMonitor.UI.Models.Storage;
 using PlcMonitor.UI.ViewModels;
@@ -7,9 +9,18 @@ namespace PlcMonitor.UI.Services
 {
     public class MapperService : IMapperService
     {
+        private readonly ProjectViewModelFactory _projectViewModelFactory;
+        private readonly PlcViewModelFactory _plcViewModelFactory;
+
+        public MapperService(ProjectViewModelFactory projectViewModelFactory, PlcViewModelFactory plcViewModelFactory)
+        {
+            _projectViewModelFactory = projectViewModelFactory;
+            _plcViewModelFactory = plcViewModelFactory;
+        }
+
         public ProjectViewModel MapFromStorage(Project project)
         {
-            return new ProjectViewModel(project.Plcs.Select(MapFromStorage));
+            return _projectViewModelFactory.Invoke(project.Plcs.Select(MapFromStorage));
         }
 
         public Project MapToStorage(ProjectViewModel project)
@@ -17,9 +28,9 @@ namespace PlcMonitor.UI.Services
             return new Project(project.Plcs.Select(MapToStorage));
         }
 
-        private static PlcViewModel MapFromStorage(PlcConfiguration plc)
+        private PlcViewModel MapFromStorage(PlcConfiguration plc)
         {
-            var res = new PlcViewModel ( plc.Plc, plc.Name, plc.Variables.Select(v => MapFromStorage(plc.Plc, v)) );
+            var res = _plcViewModelFactory.Invoke( plc.Plc, plc.Name, plc.Variables.Select(v => MapFromStorage(plc.Plc, v)) );
 
             return res;
         }
