@@ -23,6 +23,8 @@ namespace PlcMonitor.UI.ViewModels
 
         public ReactiveCommand<Unit, Unit> ReadCommand { get; }
 
+        public ReactiveCommand<VariableViewModel, Unit> UpdateCommand { get; }
+
         public PlcViewModel(IPlc plc, string name, IPlcInteractionManager plcInteractionManager)
         {
             _plcInteractionManager = plcInteractionManager;
@@ -31,6 +33,7 @@ namespace PlcMonitor.UI.ViewModels
 
             AddCommand = ReactiveCommand.Create(Add);
             ReadCommand = ReactiveCommand.CreateFromTask(Read);
+            UpdateCommand = ReactiveCommand.Create<VariableViewModel>(Update);
         }
 
         public PlcViewModel(IPlc plc, string name, IEnumerable<VariableViewModel> variables, IPlcInteractionManager plcInteractionManager)
@@ -52,6 +55,11 @@ namespace PlcMonitor.UI.ViewModels
             }
 
             return Task.CompletedTask;
+        }
+
+        private void Update(VariableViewModel variable)
+        {
+            variable.Update();
         }
     }
 }

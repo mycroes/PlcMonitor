@@ -1,5 +1,6 @@
 using System;
 using PlcMonitor.UI.Models;
+using PlcMonitor.UI.Models.S7;
 using ReactiveUI;
 using ReactiveUI.Validation.Extensions;
 
@@ -23,6 +24,11 @@ namespace PlcMonitor.UI.ViewModels
             _address = address;
 
             this.ValidationRule(x => x.Address, plc.IsValidAddress, "Invalid address");
+        }
+
+        protected override void OnUpdate()
+        {
+            if (AddressParser.TryParse(Address, out _, out var typeCode, out _, out _)) TypeCode = typeCode;
         }
     }
 }

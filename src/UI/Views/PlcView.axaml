@@ -9,7 +9,7 @@
     <StackPanel>
         <Button Command="{Binding AddCommand}">Add variable</Button>
 
-        <DataGrid Items="{Binding Variables}" HorizontalAlignment="Stretch">
+        <DataGrid Name="_variables" Items="{Binding Variables}" HorizontalAlignment="Stretch">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Address"
                                     Binding="{Binding Address}"

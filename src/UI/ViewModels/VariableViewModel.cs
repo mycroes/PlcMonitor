@@ -54,5 +54,13 @@ namespace PlcMonitor.UI.ViewModels
                 State = new VariableStateViewModel(next.Value, next.Timestamp, next.Timestamp);
             }
         }
+
+        public void Update()
+        {
+            OnUpdate();
+            State = null;
+        }
+
+        protected abstract void OnUpdate();
     }
 }
