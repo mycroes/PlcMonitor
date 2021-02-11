@@ -16,6 +16,7 @@
     <PackageReference Include="DynamicData" Version="7.1.1" />
     <PackageReference Include="NModbus" Version="3.0.62" />
     <PackageReference Include="ReactiveUI.Validation" Version="2.1.1" />
+    <PackageReference Include="ReflEx" Version="0.2.0" />
     <PackageReference Include="Sally7" Version="0.8.0" />
     <PackageReference Include="System.Text.Json" Version="5.0.1" />
   </ItemGroup>
