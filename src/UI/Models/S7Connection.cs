@@ -1,9 +1,12 @@
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using Sally7;
 using Sally7.Protocol.Cotp;
 
 namespace PlcMonitor.UI.Models
 {
-    public class S7Connection : IPlcConnection
+    public class S7Connection : IS7PlcConnection
     {
         public Sally7.S7Connection Sally7Connection { get; }
 
@@ -20,6 +23,11 @@ namespace PlcMonitor.UI.Models
         public void Close()
         {
             Sally7Connection.Close();
+        }
+
+        public Task Read(IEnumerable<IDataItem> dataItems)
+        {
+            return Sally7Connection.ReadAsync(dataItems.ToArray());
         }
     }
 }

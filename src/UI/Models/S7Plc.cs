@@ -15,7 +15,9 @@ namespace PlcMonitor.UI.Models
             DestinationTsap = destinationTsap;
         }
 
-        public IPlcConnection CreateConnection()
+        IPlcConnection IPlc.CreateConnection() => CreateConnection();
+
+        public IS7PlcConnection CreateConnection()
         {
             return new S7Connection(Host, SourceTsap, DestinationTsap);
         }
