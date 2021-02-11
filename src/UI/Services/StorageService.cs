@@ -19,7 +19,7 @@ namespace PlcMonitor.UI.Services
         {
             var file = new FileInfo(fileName);
             using var stream = file.Open(FileMode.OpenOrCreate, FileAccess.Write);
-
+            stream.SetLength(0);
             await JsonSerializer.SerializeAsync(stream, project, _options);
         }
 
