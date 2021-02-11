@@ -3,20 +3,12 @@ using System.Collections;
 using PlcMonitor.UI.Models;
 using PlcMonitor.UI.Models.PlcData;
 using ReactiveUI;
-using ReactiveUI.Validation.Extensions;
 
 namespace PlcMonitor.UI.ViewModels
 {
-    public class VariableViewModel : ValidatableViewModelBase
+    public abstract class VariableViewModel : ValidatableViewModelBase
     {
-        private readonly IPlc _plc;
-
-        private string _address;
-        public string Address
-        {
-            get => _address;
-            set => this.RaiseAndSetIfChanged(ref _address, value);
-        }
+        protected IPlc Plc { get; }
 
         private TypeCode _typeCode;
         public TypeCode TypeCode
@@ -39,19 +31,16 @@ namespace PlcMonitor.UI.ViewModels
             set => this.RaiseAndSetIfChanged(ref _state, value);
         }
 
-        public VariableViewModel(IPlc plc) : this(plc, string.Empty, default, 1, default)
+        protected VariableViewModel(IPlc plc) : this(plc, default, 1, default)
         {
         }
 
-        public VariableViewModel(IPlc plc, string address, TypeCode typeCode, int length, VariableStateViewModel? state)
+        protected VariableViewModel(IPlc plc, TypeCode typeCode, int length, VariableStateViewModel? state)
         {
-            _plc = plc;
-            _address = address;
+            Plc = plc;
             _typeCode = typeCode;
             _length = length;
             _state = state;
-
-            this.ValidationRule(x => x.Address, plc.IsValidAddress, "Invalid address");
         }
 
         public void PushValue(ReceivedValue next)

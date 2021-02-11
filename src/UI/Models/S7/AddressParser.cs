@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 
 namespace PlcMonitor.UI.Models.S7
 {
-    public static class Address
+    public static class AddressParser
     {
         // Missing support for DT, DTZ, DTL, DTLZ, which are also currently not supported by Sally7
         private static readonly Regex AddressRegex = new Regex(@"^DB(\d+),((B|BYTE|I|INT|WORD|DI|DINT|DW|DWORD|R|REAL|C|CHAR|S)(\d+)|X(\d+)\.([0-8]))$");

@@ -26,14 +26,18 @@ namespace PlcMonitor.UI.Services
 
         private static VariableViewModel MapFromStorage(IPlc plc, Variable variable)
         {
-            return new VariableViewModel(plc, variable.Address, variable.TypeCode, variable.Length, MapFromStorage(variable.State));
+            return variable switch
+            {
+                S7Variable s7var => new S7VariableViewModel((S7Plc) plc, variable.TypeCode, variable.Length, s7var.Address, MapFromStorage(variable.State)),
+                _ => throw new Exception("Unsupported variable type")
+            };
         }
 
         private static VariableStateViewModel? MapFromStorage(VariableState? state)
         {
             if (state == null) return null;
 
-            return new VariableStateViewModel(state.Value.Value, state.LastChange, state.LastRead);
+            return new VariableStateViewModel(state.Value, state.LastChange, state.LastRead);
         }
 
         private static PlcConfiguration MapToStorage(PlcViewModel plc)
@@ -43,14 +47,18 @@ namespace PlcMonitor.UI.Services
 
         private static Variable MapToStorage(VariableViewModel variable)
         {
-            return new Variable(variable.Address, variable.TypeCode, variable.Length, MapToStorage(variable.State));
+            return variable switch
+            {
+                S7VariableViewModel s7var => new S7Variable(variable.TypeCode, variable.Length, s7var.Address, MapToStorage(variable.State)),
+                _ => new Variable(variable.TypeCode, variable.Length, MapToStorage(variable.State))
+            };
         }
 
         private static VariableState? MapToStorage(VariableStateViewModel? state)
         {
             if (state == null) return null;
 
-            return new VariableState(new ValueWithTypeCode(state.Value), state.LastChange, state.LastRead.Value);
+            return new VariableState(state.Value, state.LastChange, state.LastRead.Value);
         }
     }
 }

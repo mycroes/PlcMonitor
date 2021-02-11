@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using PlcMonitor.UI.Models.Storage;
 using PlcMonitor.UI.ViewModels;
 

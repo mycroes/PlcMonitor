@@ -13,10 +13,9 @@ namespace PlcMonitor.UI.DI
             {
                 Converters =
                 {
-                    new PlcJsonConverter(),
-                    new TsapJsonConverter(),
-                    new ValueWithTypeCodeJsonConverter()
-                }
+                    new PlcViewModelJsonConverter(),
+                },
+                WriteIndented = true
             };
 
             locator.Register<IStorageService>(() => new StorageService(jsonSerializerOptions));

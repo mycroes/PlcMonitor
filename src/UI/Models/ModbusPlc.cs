@@ -17,10 +17,5 @@ namespace PlcMonitor.UI.Models
         {
             return new ModbusPlcConnection(Host, Port, UnitId);
         }
-
-        public bool IsValidAddress(string address)
-        {
-            throw new System.NotImplementedException();
-        }
     }
 }

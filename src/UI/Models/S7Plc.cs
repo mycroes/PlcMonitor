@@ -22,7 +22,7 @@ namespace PlcMonitor.UI.Models
 
         public bool IsValidAddress(string address)
         {
-            return S7.Address.TryParse(address, out _, out _, out _, out _);
+            return !string.IsNullOrWhiteSpace(address) && S7.AddressParser.TryParse(address, out _, out _, out _, out _);
         }
     }
 }
