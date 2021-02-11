@@ -63,7 +63,8 @@ namespace PlcMonitor.UI.ViewModels
             var fileName = await dialog.ShowAsync(mainWindow);
             if (fileName == null) return;
 
-            await storage.Save(mapper.MapToStorage(Project), fileName);
+            var mapped = mapper.MapToStorage(Project);
+            await storage.Save(mapped, fileName);
         }
 
         private static List<FileDialogFilter> GetFileFilters()
