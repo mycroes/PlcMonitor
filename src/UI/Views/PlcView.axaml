@@ -17,6 +17,10 @@
                 <DataGridTextColumn Header="Length"
                                     Binding="{Binding Length}"
                                     Width="auto" />
+                <DataGridTextColumn Header="Type"
+                                    Binding="{Binding TypeCode}"
+                                    Width="auto"
+                                    IsReadOnly="True" />
                 <DataGridTextColumn Header="Value"
                                     Binding="{Binding State.Value}"
                                     Width="auto"
