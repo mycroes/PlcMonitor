@@ -7,6 +7,15 @@ using PlcMonitor.UI.ViewModels;
 
 public class PlcInteractionManager : IPlcInteractionManager
 {
+    public VariableViewModel CreateVariable(IPlc plc)
+    {
+        return plc switch
+        {
+            S7Plc s7plc => new S7VariableViewModel(s7plc),
+            _ => throw new NotImplementedException()
+        };
+    }
+
     public Task Read(IPlc plc, IEnumerable<VariableViewModel> variables)
     {
         foreach (var variable in variables)

@@ -19,6 +19,8 @@ namespace PlcMonitor.UI.ViewModels
 
         public ObservableCollectionExtended<VariableViewModel> Variables { get; } = new();
 
+        public ReactiveCommand<Unit, Unit> AddCommand { get; }
+
         public ReactiveCommand<Unit, Unit> ReadCommand { get; }
 
         public PlcViewModel(IPlc plc, string name, IPlcInteractionManager plcInteractionManager)
@@ -27,6 +29,7 @@ namespace PlcMonitor.UI.ViewModels
             Plc = plc;
             Name = name;
 
+            AddCommand = ReactiveCommand.Create(Add);
             ReadCommand = ReactiveCommand.CreateFromTask(Read);
         }
 
@@ -34,6 +37,11 @@ namespace PlcMonitor.UI.ViewModels
             : this(plc, name, plcInteractionManager)
         {
             Variables.AddRange(variables);
+        }
+
+        private void Add()
+        {
+            Variables.Add(_plcInteractionManager.CreateVariable(Plc));
         }
 
         private Task Read()

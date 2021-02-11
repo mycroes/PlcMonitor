@@ -7,6 +7,8 @@
         x:Class="PlcMonitor.UI.Views.PlcView">
 
     <StackPanel>
+        <Button Command="{Binding AddCommand}">Add variable</Button>
+
         <DataGrid Items="{Binding Variables}" HorizontalAlignment="Stretch">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Address"
