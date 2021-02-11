@@ -13,7 +13,8 @@
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Address"
                                     Binding="{Binding Address}"
-                                    Width="auto" />
+                                    Width="auto"
+                                    IsReadOnly="False" />
                 <DataGridTextColumn Header="Length"
                                     Binding="{Binding Length}"
                                     Width="auto" />
