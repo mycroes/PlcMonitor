@@ -47,15 +47,7 @@ namespace PlcMonitor.UI.ViewModels
             Variables.Add(_plcInteractionManager.CreateVariable(Plc));
         }
 
-        private Task Read()
-        {
-            foreach (var variable in Variables)
-            {
-                variable.PushValue(new ReceivedValue(new Random().Next(3), DateTimeOffset.Now));
-            }
-
-            return Task.CompletedTask;
-        }
+        private Task Read() => _plcInteractionManager.Read(Plc, Variables);
 
         private void Update(VariableViewModel variable)
         {
