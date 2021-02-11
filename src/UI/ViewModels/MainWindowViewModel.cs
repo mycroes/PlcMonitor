@@ -56,7 +56,7 @@ namespace PlcMonitor.UI.ViewModels
             var mainWindow = Locator.Current.GetService<MainWindow>();
 
             var dialog = new SaveFileDialog() {
-                DefaultExtension = ".plcson",
+                DefaultExtension = "plcson",
                 Filters = GetFileFilters()
             };
 
@@ -68,7 +68,7 @@ namespace PlcMonitor.UI.ViewModels
 
         private static List<FileDialogFilter> GetFileFilters()
         {
-            return new() { new() { Name = "PlcMonitor files", Extensions = new() { ".plcson" } } };
+            return new() { new() { Name = "PlcMonitor files", Extensions = new() { "plcson" } } };
         }
     }
 }
