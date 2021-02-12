@@ -27,6 +27,8 @@ namespace PlcMonitor.UI.Views
                     .SelectMany(v => ViewModel.UpdateCommand.Execute(v))
                     .Subscribe()
                     .DisposeWith(disposables);
+
+                ViewModel.AddCommand.Subscribe(v => _variables.ScrollIntoView(v, null)).DisposeWith(disposables);
             });
         }
     }
