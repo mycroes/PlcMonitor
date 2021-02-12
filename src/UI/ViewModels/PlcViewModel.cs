@@ -1,10 +1,8 @@
-using System;
 using System.Collections.Generic;
 using System.Reactive;
 using System.Threading.Tasks;
 using DynamicData.Binding;
 using PlcMonitor.UI.Models;
-using PlcMonitor.UI.Models.PlcData;
 using ReactiveUI;
 
 namespace PlcMonitor.UI.ViewModels
