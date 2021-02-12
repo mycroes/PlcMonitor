@@ -6,8 +6,10 @@
         mc:Ignorable="d" d:DesignWidth="1350" d:DesignHeight="700"
         x:Class="PlcMonitor.UI.Views.PlcView">
 
-    <StackPanel>
-        <Button Command="{Binding AddCommand}">Add variable</Button>
+    <DockPanel VerticalAlignment="Stretch">
+        <Button DockPanel.Dock="Top" Command="{Binding AddCommand}">Add variable</Button>
+
+        <Button DockPanel.Dock="Bottom" Command="{Binding ReadCommand}">Read</Button>
 
         <DataGrid Name="_variables" Items="{Binding Variables}" HorizontalAlignment="Stretch">
             <DataGrid.Columns>
@@ -36,8 +38,6 @@
                                     IsReadOnly="True" />
             </DataGrid.Columns>
         </DataGrid>
-
-        <Button Command="{Binding ReadCommand}">Read</Button>
-    </StackPanel>
+    </DockPanel>
 
 </UserControl>

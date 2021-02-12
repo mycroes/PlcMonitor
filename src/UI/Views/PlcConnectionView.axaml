@@ -6,13 +6,12 @@
         mc:Ignorable="d" d:DesignWidth="1350" d:DesignHeight="700"
         x:Class="PlcMonitor.UI.Views.PlcConnectionView">
 
-    <StackPanel>
-        <TextBlock>PLC Node</TextBlock>
-        <TextBlock Text="{Binding Name}" />
+    <DockPanel>
+        <TextBlock DockPanel.Dock="Top" Text="{Binding Name}" />
+
+        <Button DockPanel.Dock="Bottom" Command="{Binding DeleteCommand}">Delete PLC</Button>
 
         <ContentControl Content="{Binding Plc}" />
-
-        <Button Command="{Binding DeleteCommand}">Delete PLC</Button>
-    </StackPanel>
+    </DockPanel>
 
 </UserControl>
