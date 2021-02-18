@@ -3,6 +3,7 @@ using System.Collections;
 using PlcMonitor.UI.Models;
 using PlcMonitor.UI.Models.PlcData;
 using ReactiveUI;
+using ReactiveUI.Validation.Extensions;
 
 namespace PlcMonitor.UI.ViewModels
 {
@@ -41,6 +42,8 @@ namespace PlcMonitor.UI.ViewModels
             _typeCode = typeCode;
             _length = length;
             _state = state;
+
+            this.ValidationRule(x => x.Length, x => x > 0, "Length must be positive and at least 1");
         }
 
         public void PushValue(ReceivedValue next)

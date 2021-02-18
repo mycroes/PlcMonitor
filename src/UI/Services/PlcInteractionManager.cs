@@ -15,6 +15,7 @@ public class PlcInteractionManager : IPlcInteractionManager
         return plc switch
         {
             S7Plc s7plc => new S7VariableViewModel(s7plc),
+            ModbusPlc modbusPlc => new ModbusVariableViewModel(modbusPlc),
             _ => throw new NotImplementedException()
         };
     }

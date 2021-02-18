@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace PlcMonitor.UI.Models.Storage
 {
-    public class Variable
+    public abstract class Variable
     {
         public TypeCode TypeCode { get; }
 
@@ -12,7 +12,7 @@ namespace PlcMonitor.UI.Models.Storage
         [JsonIgnore]
         public VariableState? State { get; set; }
 
-        public Variable(TypeCode typeCode, int length, VariableState? state)
+        protected Variable(TypeCode typeCode, int length, VariableState? state)
         {
             TypeCode = typeCode;
             Length = length;

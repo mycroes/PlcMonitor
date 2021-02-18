@@ -78,7 +78,8 @@ namespace PlcMonitor.UI.Infrastructure
         private IEnumerable<JsonConverter> GetModbusJsonConverters()
         {
             yield return new DerivedTypeJsonConverter<IPlc, ModbusPlc>();
-            yield return new VariableJsonConverter<Variable>();
+            yield return new DerivedTypeJsonConverter<Variable, ModbusVariable>();
+            yield return new VariableJsonConverter<ModbusVariable>();
         }
     }
 }

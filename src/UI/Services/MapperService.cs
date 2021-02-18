@@ -39,7 +39,8 @@ namespace PlcMonitor.UI.Services
         {
             return variable switch
             {
-                S7Variable s7var => new S7VariableViewModel((S7Plc) plc, variable.TypeCode, variable.Length, s7var.Address, MapFromStorage(variable.State)),
+                S7Variable s7var => new S7VariableViewModel((S7Plc) plc, s7var.Address, variable.TypeCode, variable.Length, MapFromStorage(variable.State)),
+                ModbusVariable modbusVar => new ModbusVariableViewModel((ModbusPlc) plc, modbusVar.ObjectType, modbusVar.Address, variable.TypeCode, variable.Length, MapFromStorage(variable.State)),
                 _ => throw new Exception("Unsupported variable type")
             };
         }
@@ -60,8 +61,9 @@ namespace PlcMonitor.UI.Services
         {
             return variable switch
             {
-                S7VariableViewModel s7var => new S7Variable(variable.TypeCode, variable.Length, s7var.Address, MapToStorage(variable.State)),
-                _ => new Variable(variable.TypeCode, variable.Length, MapToStorage(variable.State))
+                S7VariableViewModel s7var => new S7Variable(s7var.Address, variable.TypeCode, variable.Length, MapToStorage(variable.State)),
+                ModbusVariableViewModel modbusVar => new ModbusVariable(modbusVar.ObjectType, modbusVar.Address, variable.TypeCode, variable.Length, MapToStorage(variable.State)),
+                _ => throw new ArgumentException($"Unsupport variable type given: {variable}.")
             };
         }
 

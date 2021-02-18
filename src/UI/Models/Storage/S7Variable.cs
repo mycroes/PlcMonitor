@@ -6,7 +6,7 @@ namespace PlcMonitor.UI.Models.Storage
     {
         public string Address { get; }
 
-        public S7Variable(TypeCode typeCode, int length, string address, VariableState? state)
+        public S7Variable(string address, TypeCode typeCode, int length, VariableState? state)
             : base(typeCode, length, state)
         {
             Address = address;

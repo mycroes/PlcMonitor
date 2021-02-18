@@ -11,33 +11,7 @@
 
         <Button DockPanel.Dock="Bottom" Command="{Binding ReadCommand}">Read</Button>
 
-        <DataGrid Name="_variables" Items="{Binding Variables}" HorizontalAlignment="Stretch">
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="Address"
-                                    Binding="{Binding Address}"
-                                    Width="auto"
-                                    IsReadOnly="False" />
-                <DataGridTextColumn Header="Length"
-                                    Binding="{Binding Length}"
-                                    Width="auto" />
-                <DataGridTextColumn Header="Type"
-                                    Binding="{Binding TypeCode}"
-                                    Width="auto"
-                                    IsReadOnly="True" />
-                <DataGridTextColumn Header="Value"
-                                    Binding="{Binding State.Value}"
-                                    Width="auto"
-                                    IsReadOnly="True" />
-                <DataGridTextColumn Header="Last change"
-                                    Binding="{Binding State.LastChange}"
-                                    Width="auto"
-                                    IsReadOnly="True" />
-                <DataGridTextColumn Header="Last read"
-                                    Binding="{Binding State.LastRead^}"
-                                    Width="auto"
-                                    IsReadOnly="True" />
-            </DataGrid.Columns>
-        </DataGrid>
+        <DataGrid Name="_variables" Items="{Binding Variables}" HorizontalAlignment="Stretch" />
     </DockPanel>
 
 </UserControl>
