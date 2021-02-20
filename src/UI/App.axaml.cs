@@ -1,4 +1,7 @@
+using System;
 using System.Linq;
+using System.Reactive;
+using System.Reactive.Concurrency;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Controls.Notifications;
@@ -6,6 +9,7 @@ using Avalonia.Markup.Xaml;
 using PlcMonitor.UI.DI;
 using PlcMonitor.UI.ViewModels;
 using PlcMonitor.UI.Views;
+using ReactiveUI;
 using Splat;
 
 namespace PlcMonitor.UI
@@ -24,8 +28,12 @@ namespace PlcMonitor.UI
                 ServiceLocator.Initialize(Locator.CurrentMutable, Locator.Current);
 
                 desktop.MainWindow = Locator.Current.GetService<MainWindow>();
-                // Initialize the NotificationManager
-                Locator.Current.GetService<INotificationManager>();
+
+                var notificationManager = Locator.Current.GetService<INotificationManager>();
+                RxApp.DefaultExceptionHandler = Observer.Create<Exception>(ex =>
+                    RxApp.MainThreadScheduler.Schedule(() => notificationManager.Show(
+                        new Avalonia.Controls.Notifications.Notification(
+                            "Unhandled exception occured", ex.Message, NotificationType.Error))));
 
                 desktop.MainWindow.DataContext = new MainWindowViewModel(
                     Locator.Current.GetService<ProjectViewModelFactory>().Invoke(Enumerable.Empty<PlcViewModel>()));
