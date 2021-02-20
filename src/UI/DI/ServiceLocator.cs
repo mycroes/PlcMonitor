@@ -1,11 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Text.Json;
+using Avalonia;
+using Avalonia.Controls.Notifications;
 using PlcMonitor.UI.Infrastructure;
 using PlcMonitor.UI.Models;
 using PlcMonitor.UI.Services;
 using PlcMonitor.UI.ViewModels;
 using PlcMonitor.UI.ViewModels.Explorer;
+using PlcMonitor.UI.Views;
 using Splat;
 
 namespace PlcMonitor.UI.DI
@@ -29,9 +32,19 @@ namespace PlcMonitor.UI.DI
             locator.Register<IMapperService>(() => new MapperService(Get<ProjectViewModelFactory>(), Get<PlcViewModelFactory>()));
             locator.Register<IPlcInteractionManager>(() => new PlcInteractionManager());
 
-            locator.RegisterFactory<PlcViewModelFactory>((plc, name, variables) => new PlcViewModel(plc, name, variables, Get<IPlcInteractionManager>()));
+            locator.RegisterFactory<PlcViewModelFactory>((plc, name, variables) => new PlcViewModel(
+                plc, name, variables, Get<IPlcInteractionManager>(), Get<INotificationManager>()));
+
             locator.RegisterFactory<AddConnectionNodeFactory>((project) => new AddConnectionNode(project, Get<PlcViewModelFactory>()));
             locator.RegisterFactory<ProjectViewModelFactory>((plcs) => new ProjectViewModel(plcs, Get<AddConnectionNodeFactory>()));
+
+            locator.RegisterLazySingleton<MainWindow>(() => new MainWindow());
+            locator.RegisterLazySingleton<INotificationManager>(() => new WindowNotificationManager(resolver.GetService<MainWindow>())
+            {
+				Position = NotificationPosition.BottomRight,
+				MaxItems = 4,
+				Margin = new Thickness(0, 0, 15, 40)
+			});
         }
 
         private static void RegisterFactory<TFactory>(this IMutableDependencyResolver locator, TFactory factory) where TFactory : Delegate

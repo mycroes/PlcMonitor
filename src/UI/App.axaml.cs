@@ -1,6 +1,7 @@
 using System.Linq;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Controls.Notifications;
 using Avalonia.Markup.Xaml;
 using PlcMonitor.UI.DI;
 using PlcMonitor.UI.ViewModels;
@@ -22,13 +23,12 @@ namespace PlcMonitor.UI
             {
                 ServiceLocator.Initialize(Locator.CurrentMutable, Locator.Current);
 
-                desktop.MainWindow = new MainWindow
-                {
-                    DataContext = new MainWindowViewModel(
-                        Locator.Current.GetService<ProjectViewModelFactory>().Invoke(Enumerable.Empty<PlcViewModel>())),
-                };
+                desktop.MainWindow = Locator.Current.GetService<MainWindow>();
+                // Initialize the NotificationManager
+                Locator.Current.GetService<INotificationManager>();
 
-                Locator.CurrentMutable.RegisterConstant((MainWindow) desktop.MainWindow);
+                desktop.MainWindow.DataContext = new MainWindowViewModel(
+                    Locator.Current.GetService<ProjectViewModelFactory>().Invoke(Enumerable.Empty<PlcViewModel>()));
             }
 
             var theme = new Avalonia.Themes.Default.DefaultTheme();

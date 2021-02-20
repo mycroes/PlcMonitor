@@ -1,15 +1,20 @@
+using System;
 using System.Collections.Generic;
 using System.Reactive;
+using System.Reactive.Disposables;
+using System.Reactive.Linq;
 using System.Threading.Tasks;
+using Avalonia.Controls.Notifications;
 using DynamicData.Binding;
 using PlcMonitor.UI.Models;
 using ReactiveUI;
 
 namespace PlcMonitor.UI.ViewModels
 {
-    public class PlcViewModel : ViewModelBase
+    public class PlcViewModel : ViewModelBase, IActivatableViewModel
     {
         private readonly IPlcInteractionManager _plcInteractionManager;
+        private readonly INotificationManager _notificationManager;
 
         public string Name { get; }
 
@@ -23,19 +28,31 @@ namespace PlcMonitor.UI.ViewModels
 
         public ReactiveCommand<VariableViewModel, Unit> UpdateCommand { get; }
 
-        public PlcViewModel(IPlc plc, string name, IPlcInteractionManager plcInteractionManager)
+        public ViewModelActivator Activator { get; } = new ViewModelActivator();
+
+        public PlcViewModel(IPlc plc, string name, IPlcInteractionManager plcInteractionManager,
+            INotificationManager notificationManager)
         {
             _plcInteractionManager = plcInteractionManager;
+            _notificationManager = notificationManager;
+
             Plc = plc;
             Name = name;
 
             AddCommand = ReactiveCommand.Create<VariableViewModel>(Add);
             ReadCommand = ReactiveCommand.CreateFromTask(Read);
             UpdateCommand = ReactiveCommand.Create<VariableViewModel>(Update);
+
+            this.WhenActivated(disposables => {
+                ReadCommand.ThrownExceptions.ObserveOn(RxApp.MainThreadScheduler).Subscribe(e =>
+                    _notificationManager.Show(new Avalonia.Controls.Notifications.Notification(
+                        "Failed to read from PLC", e.Message, NotificationType.Error))).DisposeWith(disposables);
+            });
         }
 
-        public PlcViewModel(IPlc plc, string name, IEnumerable<VariableViewModel> variables, IPlcInteractionManager plcInteractionManager)
-            : this(plc, name, plcInteractionManager)
+        public PlcViewModel(IPlc plc, string name, IEnumerable<VariableViewModel> variables,
+            IPlcInteractionManager plcInteractionManager, INotificationManager notificationManager)
+            : this(plc, name, plcInteractionManager, notificationManager)
         {
             Variables.AddRange(variables);
         }
