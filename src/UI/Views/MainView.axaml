@@ -19,8 +19,11 @@
                     <ExperimentalAcrylicMaterial TintColor="Black" MaterialOpacity="0.85" TintOpacity="1" />
                 </ExperimentalAcrylicBorder.Material>
 
-                <AutoCompleteBox HorizontalAlignment="Stretch" Margin="20 40 20 0" Watermark="Search" Items="{Binding SearchItems}" />
+                <StackPanel Orientation="Horizontal" Margin="20 20 20 0" VerticalAlignment="Top">
+                    <TextBlock FontSize="24">PlcMonitor</TextBlock>
+                </StackPanel>
             </ExperimentalAcrylicBorder>
+
             <ExperimentalAcrylicBorder IsHitTestVisible="False">
                 <ExperimentalAcrylicBorder.Material>
                     <ExperimentalAcrylicMaterial TintColor="#222222" MaterialOpacity="0.85" TintOpacity="1" />
