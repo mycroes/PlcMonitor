@@ -9,8 +9,8 @@ namespace PlcMonitor.UI.Models.Storage
 
         public ushort Address { get; }
 
-        public ModbusVariable(ObjectType objectType, ushort address, TypeCode typeCode, int length, VariableState? state)
-            : base(typeCode, length, state)
+        public ModbusVariable(string? name, ObjectType objectType, ushort address, TypeCode typeCode, int length, VariableState? state)
+            : base(name, typeCode, length, state)
         {
             ObjectType = objectType;
             Address = address;

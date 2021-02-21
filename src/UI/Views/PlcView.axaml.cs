@@ -53,6 +53,8 @@ namespace PlcMonitor.UI.Views
                 };
             }
 
+            yield return Col("Name", nameof(VariableViewModel.Name));
+
             switch (plc)
             {
                 case S7Plc _:

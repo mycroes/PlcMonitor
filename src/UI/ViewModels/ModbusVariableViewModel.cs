@@ -22,12 +22,12 @@ namespace PlcMonitor.UI.ViewModels
             set => this.RaiseAndSetIfChanged(ref _address, value);
         }
 
-        public ModbusVariableViewModel(ModbusPlc plc) : this(plc, default, default, default, 1, default)
+        public ModbusVariableViewModel(ModbusPlc plc) : this(plc, default, default, default, default, 1, default)
         {
         }
 
-        public ModbusVariableViewModel(ModbusPlc plc, ObjectType objectType, ushort address, TypeCode typeCode, int length, VariableStateViewModel? state)
-            : base(plc, typeCode, length, state)
+        public ModbusVariableViewModel(ModbusPlc plc, string? name, ObjectType objectType, ushort address, TypeCode typeCode, int length, VariableStateViewModel? state)
+            : base(plc, name, typeCode, length, state)
         {
             _objectType = objectType;
             _address = address;

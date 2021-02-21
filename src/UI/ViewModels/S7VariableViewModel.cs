@@ -15,11 +15,11 @@ namespace PlcMonitor.UI.ViewModels
             set => this.RaiseAndSetIfChanged(ref _address, value);
         }
 
-        public S7VariableViewModel(S7Plc plc) : this(plc, string.Empty, default, 1, default)
+        public S7VariableViewModel(S7Plc plc) : this(plc, default, string.Empty, default, 1, default)
         { }
 
-        public S7VariableViewModel(S7Plc plc, string address, TypeCode typeCode, int length, VariableStateViewModel? state)
-            : base(plc, typeCode, length, state)
+        public S7VariableViewModel(S7Plc plc, string? name, string address, TypeCode typeCode, int length, VariableStateViewModel? state)
+            : base(plc, name, typeCode, length, state)
         {
             _address = address;
 
