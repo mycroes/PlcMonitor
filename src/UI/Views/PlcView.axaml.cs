@@ -103,7 +103,7 @@ namespace PlcMonitor.UI.Views
 
             yield return Col("Value", $"{nameof(VariableViewModel.State)}.{nameof(VariableViewModel.State.Value)}", true);
             yield return Col("Last change", $"{nameof(VariableViewModel.State)}.{nameof(VariableViewModel.State.LastChange)}", true);
-            yield return Col("Last read", $"{nameof(VariableViewModel.State)}.{nameof(VariableViewModel.State.LastRead)}^");
+            yield return Col("Last read", $"{nameof(VariableViewModel.State)}.{nameof(VariableViewModel.State.LastRead)}^", true);
         }
     }
 }
