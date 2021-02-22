@@ -7,6 +7,7 @@ using PlcMonitor.UI.ViewModels.Explorer;
 using ReactiveUI;
 using System.Collections.Generic;
 using PlcMonitor.UI.DI;
+using System.IO;
 
 namespace PlcMonitor.UI.ViewModels
 {
@@ -16,13 +17,21 @@ namespace PlcMonitor.UI.ViewModels
 
         public ViewModelActivator Activator { get; } = new ViewModelActivator();
 
+        private FileInfo? _file;
+        public FileInfo? File
+        {
+            get => _file;
+            set => this.RaiseAndSetIfChanged(ref _file, value);
+        }
+
         public OverviewNode OverviewNode { get; }
         public AddConnectionNode AddConnectionNode { get; }
 
         public ObservableCollectionExtended<PlcViewModel> Plcs { get; } = new ObservableCollectionExtended<PlcViewModel>();
 
-        public ProjectViewModel(AddConnectionNodeFactory addConnectionNodeFactory)
+        public ProjectViewModel(FileInfo? file, AddConnectionNodeFactory addConnectionNodeFactory)
         {
+            _file = file;
             OverviewNode = new OverviewNode();
             AddConnectionNode = addConnectionNodeFactory.Invoke(this);
 
@@ -41,8 +50,8 @@ namespace PlcMonitor.UI.ViewModels
             });
         }
 
-        public ProjectViewModel(IEnumerable<PlcViewModel> plcs, AddConnectionNodeFactory addConnectionNodeFactory)
-            : this(addConnectionNodeFactory)
+        public ProjectViewModel(FileInfo? file, IEnumerable<PlcViewModel> plcs, AddConnectionNodeFactory addConnectionNodeFactory)
+            : this(file, addConnectionNodeFactory)
         {
             Plcs.AddRange(plcs);
         }

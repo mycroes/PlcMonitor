@@ -36,7 +36,7 @@ namespace PlcMonitor.UI
                             "Unhandled exception occured", ex.Message, NotificationType.Error))));
 
                 desktop.MainWindow.DataContext = new MainWindowViewModel(
-                    Locator.Current.GetService<ProjectViewModelFactory>().Invoke(Enumerable.Empty<PlcViewModel>()));
+                    Locator.Current.GetService<ProjectViewModelFactory>().Invoke(null, Enumerable.Empty<PlcViewModel>()));
             }
 
             var theme = new Avalonia.Themes.Default.DefaultTheme();

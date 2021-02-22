@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
@@ -22,13 +23,17 @@ namespace PlcMonitor.UI.ViewModels
 
         public ReactiveCommand<Unit, Unit> LoadCommand { get; }
         public ReactiveCommand<Unit, Unit> SaveCommand { get; }
+        public ReactiveCommand<Unit, Unit> SaveAsCommand { get; }
 
         public MainWindowViewModel(ProjectViewModel projectViewModel)
         {
             _project = projectViewModel;
 
+            var canSave = this.WhenAnyValue(x => x.Project).Select(p => p.File is {});
+
             LoadCommand = ReactiveCommand.CreateFromTask(Load);
-            SaveCommand = ReactiveCommand.CreateFromTask(Save);
+            SaveCommand = ReactiveCommand.CreateFromTask(() => Save(Project.File!), canSave);
+            SaveAsCommand = ReactiveCommand.CreateFromTask(SaveAs);
         }
 
         private async Task Load()
@@ -45,14 +50,22 @@ namespace PlcMonitor.UI.ViewModels
             var fileNames = await dialog.ShowAsync(mainWindow);
             if (fileNames?.FirstOrDefault() == null) return;
 
-            var project = mapper.MapFromStorage(await storage.Load(fileNames[0]));
+            var file = new FileInfo(fileNames[0]);
+            var project = mapper.MapFromStorage(file, await storage.Load(file));
             Project = project;
         }
 
-        private async Task Save()
+        private async Task Save(FileInfo file)
         {
             var mapper = Locator.Current.GetService<IMapperService>();
             var storage = Locator.Current.GetService<IStorageService>();
+
+            var mapped = mapper.MapToStorage(Project);
+            await storage.Save(mapped, file);
+        }
+
+        private async Task SaveAs()
+        {
             var mainWindow = Locator.Current.GetService<MainWindow>();
 
             var dialog = new SaveFileDialog() {
@@ -63,8 +76,9 @@ namespace PlcMonitor.UI.ViewModels
             var fileName = await dialog.ShowAsync(mainWindow);
             if (fileName == null) return;
 
-            var mapped = mapper.MapToStorage(Project);
-            await storage.Save(mapped, fileName);
+            var file = new FileInfo(fileName);
+            await Save(file);
+            Project.File = file;
         }
 
         private static List<FileDialogFilter> GetFileFilters()

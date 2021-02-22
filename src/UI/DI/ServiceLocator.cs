@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text.Json;
 using Avalonia;
 using Avalonia.Controls.Notifications;
@@ -36,7 +37,7 @@ namespace PlcMonitor.UI.DI
                 plc, name, variables, Get<IPlcInteractionManager>(), Get<INotificationManager>()));
 
             locator.RegisterFactory<AddConnectionNodeFactory>((project) => new AddConnectionNode(project, Get<PlcViewModelFactory>()));
-            locator.RegisterFactory<ProjectViewModelFactory>((plcs) => new ProjectViewModel(plcs, Get<AddConnectionNodeFactory>()));
+            locator.RegisterFactory<ProjectViewModelFactory>((file, plcs) => new ProjectViewModel(file, plcs, Get<AddConnectionNodeFactory>()));
 
             locator.RegisterLazySingleton<MainWindow>(() => new MainWindow());
             locator.RegisterLazySingleton<INotificationManager>(() => new WindowNotificationManager(resolver.GetService<MainWindow>())
@@ -55,5 +56,5 @@ namespace PlcMonitor.UI.DI
 
     public delegate PlcViewModel PlcViewModelFactory(IPlc plc, string name, IEnumerable<VariableViewModel> variables);
     public delegate AddConnectionNode AddConnectionNodeFactory(ProjectViewModel project);
-    public delegate ProjectViewModel ProjectViewModelFactory(IEnumerable<PlcViewModel> plcs);
+    public delegate ProjectViewModel ProjectViewModelFactory(FileInfo? file, IEnumerable<PlcViewModel> plcs);
 }

@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Linq;
 using PlcMonitor.UI.DI;
 using PlcMonitor.UI.Models;
@@ -18,9 +19,9 @@ namespace PlcMonitor.UI.Services
             _plcViewModelFactory = plcViewModelFactory;
         }
 
-        public ProjectViewModel MapFromStorage(Project project)
+        public ProjectViewModel MapFromStorage(FileInfo file, Project project)
         {
-            return _projectViewModelFactory.Invoke(project.Plcs.Select(MapFromStorage));
+            return _projectViewModelFactory.Invoke(file, project.Plcs.Select(MapFromStorage));
         }
 
         public Project MapToStorage(ProjectViewModel project)
