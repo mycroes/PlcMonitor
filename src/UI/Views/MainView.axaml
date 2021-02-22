@@ -9,17 +9,12 @@
 
     <Panel>
         <DockPanel HorizontalAlignment="Stretch">
-            <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
-                <Button Command="{Binding SaveCommand}">Save</Button>
-                <Button Command="{Binding LoadCommand}">Load</Button>
-            </StackPanel>
-
             <ExperimentalAcrylicBorder DockPanel.Dock="Left" Width="240" IsHitTestVisible="False">
                 <ExperimentalAcrylicBorder.Material>
                     <ExperimentalAcrylicMaterial TintColor="Black" MaterialOpacity="0.85" TintOpacity="1" />
                 </ExperimentalAcrylicBorder.Material>
 
-                <StackPanel Orientation="Horizontal" Margin="20 20 20 0" VerticalAlignment="Top">
+                <StackPanel Orientation="Horizontal" Margin="20 40 20 0" VerticalAlignment="Top">
                     <TextBlock FontSize="24">PlcMonitor</TextBlock>
                 </StackPanel>
             </ExperimentalAcrylicBorder>
@@ -30,6 +25,11 @@
                 </ExperimentalAcrylicBorder.Material>
             </ExperimentalAcrylicBorder>
         </DockPanel>
+
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Top">
+            <Button Command="{Binding SaveCommand}">Save</Button>
+            <Button Command="{Binding LoadCommand}">Load</Button>
+        </StackPanel>
 
         <ContentControl Content="{Binding Project}" />
     </Panel>
