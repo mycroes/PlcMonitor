@@ -34,6 +34,8 @@
                     <MenuItem Header="Save as..." Command="{Binding SaveAsCommand}" />
                 </MenuItem>
             </Menu>
+
+            <TextBlock Text="{Binding Project.File.FullName}" IsHitTestVisible="False" TextAlignment="Center" VerticalAlignment="Center" />
         </DockPanel>
 
         <ContentControl Content="{Binding Project}" />
