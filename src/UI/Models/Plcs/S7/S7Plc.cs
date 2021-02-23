@@ -1,8 +1,8 @@
 using Sally7.Protocol.Cotp;
 
-namespace PlcMonitor.UI.Models
+namespace PlcMonitor.UI.Models.Plcs.S7
 {
-    public class S7Plc : IPlc
+    public class S7Plc : Plc
     {
         public string Host { get; }
         public Tsap SourceTsap { get; }
@@ -15,9 +15,7 @@ namespace PlcMonitor.UI.Models
             DestinationTsap = destinationTsap;
         }
 
-        IPlcConnection IPlc.CreateConnection() => CreateConnection();
-
-        public IS7PlcConnection CreateConnection()
+        public override IS7PlcConnection CreateConnection()
         {
             return new S7Connection(Host, SourceTsap, DestinationTsap);
         }

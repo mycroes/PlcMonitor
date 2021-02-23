@@ -2,7 +2,7 @@ using System;
 using System.Globalization;
 using System.Text.RegularExpressions;
 
-namespace PlcMonitor.UI.Models.S7
+namespace PlcMonitor.UI.Models.Plcs.S7
 {
     public static class AddressParser
     {

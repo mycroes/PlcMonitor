@@ -1,6 +1,6 @@
 using System;
 using System.Collections;
-using PlcMonitor.UI.Models;
+using PlcMonitor.UI.Models.Plcs;
 using PlcMonitor.UI.Models.PlcData;
 using ReactiveUI;
 using ReactiveUI.Validation.Extensions;

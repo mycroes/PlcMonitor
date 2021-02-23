@@ -8,8 +8,9 @@ using Avalonia.Markup.Xaml;
 using Avalonia.ReactiveUI;
 using DynamicData;
 using PlcMonitor.UI.Controls;
-using PlcMonitor.UI.Models;
-using PlcMonitor.UI.Models.Modbus;
+using PlcMonitor.UI.Models.Plcs;
+using PlcMonitor.UI.Models.Plcs.Modbus;
+using PlcMonitor.UI.Models.Plcs.S7;
 using PlcMonitor.UI.ViewModels;
 using ReactiveUI;
 

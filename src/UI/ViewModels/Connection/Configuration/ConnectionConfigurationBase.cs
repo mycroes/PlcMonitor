@@ -1,4 +1,4 @@
-using PlcMonitor.UI.Models;
+using PlcMonitor.UI.Models.Plcs;
 using ReactiveUI;
 using ReactiveUI.Validation.Extensions;
 

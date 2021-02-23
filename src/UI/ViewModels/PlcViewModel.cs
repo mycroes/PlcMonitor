@@ -6,7 +6,7 @@ using System.Reactive.Linq;
 using System.Threading.Tasks;
 using Avalonia.Controls.Notifications;
 using DynamicData.Binding;
-using PlcMonitor.UI.Models;
+using PlcMonitor.UI.Models.Plcs;
 using ReactiveUI;
 
 namespace PlcMonitor.UI.ViewModels

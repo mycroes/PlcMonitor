@@ -1,5 +1,5 @@
 using System;
-using PlcMonitor.UI.Models.Modbus;
+using PlcMonitor.UI.Models.Plcs.Modbus;
 
 namespace PlcMonitor.UI.Models.Storage
 {

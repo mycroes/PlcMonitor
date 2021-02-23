@@ -1,6 +1,4 @@
-using System;
-
-namespace PlcMonitor.UI.Models
+namespace PlcMonitor.UI.Models.Plcs
 {
     public interface IPlc
     {

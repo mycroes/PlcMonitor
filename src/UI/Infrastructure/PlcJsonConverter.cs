@@ -1,7 +1,9 @@
 using System;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using PlcMonitor.UI.Models;
+using PlcMonitor.UI.Models.Plcs;
+using PlcMonitor.UI.Models.Plcs.Modbus;
+using PlcMonitor.UI.Models.Plcs.S7;
 using PlcMonitor.UI.Models.Storage;
 
 namespace PlcMonitor.UI.Infrastructure

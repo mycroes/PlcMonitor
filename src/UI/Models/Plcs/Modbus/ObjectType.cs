@@ -1,4 +1,4 @@
-namespace PlcMonitor.UI.Models.Modbus
+namespace PlcMonitor.UI.Models.Plcs.Modbus
 {
     public enum ObjectType
     {

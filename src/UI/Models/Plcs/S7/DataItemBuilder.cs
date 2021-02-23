@@ -4,7 +4,7 @@ using PlcMonitor.UI.Infrastructure;
 using ReflEx;
 using Sally7;
 
-namespace PlcMonitor.UI.Models.S7
+namespace PlcMonitor.UI.Models.Plcs.S7
 {
     public class DataItemBuilder
     {

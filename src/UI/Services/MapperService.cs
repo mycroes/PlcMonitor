@@ -2,7 +2,9 @@ using System;
 using System.IO;
 using System.Linq;
 using PlcMonitor.UI.DI;
-using PlcMonitor.UI.Models;
+using PlcMonitor.UI.Models.Plcs;
+using PlcMonitor.UI.Models.Plcs.Modbus;
+using PlcMonitor.UI.Models.Plcs.S7;
 using PlcMonitor.UI.Models.Storage;
 using PlcMonitor.UI.ViewModels;
 

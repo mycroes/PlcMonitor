@@ -1,6 +1,5 @@
 using System;
-using PlcMonitor.UI.Models;
-using PlcMonitor.UI.Models.S7;
+using PlcMonitor.UI.Models.Plcs.S7;
 using ReactiveUI;
 using ReactiveUI.Validation.Extensions;
 

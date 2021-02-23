@@ -1,6 +1,5 @@
 using System;
-using PlcMonitor.UI.Models;
-using PlcMonitor.UI.Models.Modbus;
+using PlcMonitor.UI.Models.Plcs.Modbus;
 using ReactiveUI;
 using ReactiveUI.Validation.Extensions;
 

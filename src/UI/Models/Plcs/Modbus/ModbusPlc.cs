@@ -1,6 +1,6 @@
-namespace PlcMonitor.UI.Models
+namespace PlcMonitor.UI.Models.Plcs.Modbus
 {
-    public class ModbusPlc : IPlc
+    public class ModbusPlc : Plc
     {
         public string Host { get; }
         public int Port { get; }
@@ -13,7 +13,7 @@ namespace PlcMonitor.UI.Models
             UnitId = unitId;
         }
 
-        public IPlcConnection CreateConnection()
+        public override IPlcConnection CreateConnection()
         {
             return new ModbusPlcConnection(Host, Port, UnitId);
         }

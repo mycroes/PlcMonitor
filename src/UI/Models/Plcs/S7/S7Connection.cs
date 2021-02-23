@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Sally7;
 using Sally7.Protocol.Cotp;
 
-namespace PlcMonitor.UI.Models
+namespace PlcMonitor.UI.Models.Plcs.S7
 {
     public class S7Connection : IS7PlcConnection
     {

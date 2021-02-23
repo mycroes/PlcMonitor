@@ -1,6 +1,7 @@
 using System;
 using System.Globalization;
-using PlcMonitor.UI.Models;
+using PlcMonitor.UI.Models.Plcs;
+using PlcMonitor.UI.Models.Plcs.S7;
 using ReactiveUI;
 using ReactiveUI.Validation.Extensions;
 using Sally7.Protocol.Cotp;

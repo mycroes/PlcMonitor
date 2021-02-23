@@ -5,7 +5,7 @@ using System.Text.Json;
 using Avalonia;
 using Avalonia.Controls.Notifications;
 using PlcMonitor.UI.Infrastructure;
-using PlcMonitor.UI.Models;
+using PlcMonitor.UI.Models.Plcs;
 using PlcMonitor.UI.Services;
 using PlcMonitor.UI.ViewModels;
 using PlcMonitor.UI.ViewModels.Explorer;

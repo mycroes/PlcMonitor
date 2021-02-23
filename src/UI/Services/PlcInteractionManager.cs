@@ -2,9 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using PlcMonitor.UI.Models;
 using PlcMonitor.UI.Models.PlcData;
-using PlcMonitor.UI.Models.S7;
+using PlcMonitor.UI.Models.Plcs;
+using PlcMonitor.UI.Models.Plcs.S7;
+using PlcMonitor.UI.Models.Plcs.Modbus;
 using PlcMonitor.UI.ViewModels;
 using Sally7;
 
@@ -45,16 +46,7 @@ public class PlcInteractionManager : IPlcInteractionManager
 
         var pairs = variables.Select(v => (Variable: v, DataItem: DataItemBuilder.BuildDataItem(v.Address, v.Length))).ToList();
 
-        var conn = plc.CreateConnection();
-        await conn.Open();
-        try
-        {
-            await conn.Read(pairs.Select(p => p.DataItem));
-        }
-        finally
-        {
-            conn.Close();
-        }
+        await plc.Schedule(conn => ((IS7PlcConnection) conn).Read(pairs.Select(p => p.DataItem)));
 
         foreach (var (variable, dataItem) in pairs)
         {

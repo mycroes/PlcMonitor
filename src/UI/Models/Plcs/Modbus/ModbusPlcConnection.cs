@@ -2,7 +2,7 @@ using System.Net.Sockets;
 using System.Threading.Tasks;
 using NModbus;
 
-namespace PlcMonitor.UI.Models
+namespace PlcMonitor.UI.Models.Plcs.Modbus
 {
     public class ModbusPlcConnection : IPlcConnection
     {

@@ -16,7 +16,7 @@ using Splat;
 
 namespace PlcMonitor.UI.ViewModels
 {
-    public class MainWindowViewModel : ViewModelBase
+    public class MainWindowViewModel : ViewModelBase, IActivatableViewModel
     {
         private readonly Subject<Unit> _projectPersisted = new Subject<Unit>();
 
@@ -32,6 +32,8 @@ namespace PlcMonitor.UI.ViewModels
         public ReactiveCommand<Unit, bool> SaveAsCommand { get; }
 
         public IObservable<bool> HasChanges { get; }
+
+        public ViewModelActivator Activator { get; } = new ViewModelActivator();
 
         public MainWindowViewModel(ProjectViewModel projectViewModel)
         {
