@@ -21,7 +21,7 @@ namespace PlcMonitor.UI.ViewModels
             private set => this.RaiseAndSetIfChanged(ref _project, value);
         }
 
-        public ReactiveCommand<Unit, Unit> LoadCommand { get; }
+        public ReactiveCommand<Unit, Unit> OpenCommand { get; }
         public ReactiveCommand<Unit, Unit> SaveCommand { get; }
         public ReactiveCommand<Unit, Unit> SaveAsCommand { get; }
 
@@ -31,12 +31,12 @@ namespace PlcMonitor.UI.ViewModels
 
             var canSave = this.WhenAnyValue(x => x.Project).Select(p => p.File is {});
 
-            LoadCommand = ReactiveCommand.CreateFromTask(Load);
+            OpenCommand = ReactiveCommand.CreateFromTask(Open);
             SaveCommand = ReactiveCommand.CreateFromTask(() => Save(Project.File!), canSave);
             SaveAsCommand = ReactiveCommand.CreateFromTask(SaveAs);
         }
 
-        private async Task Load()
+        private async Task Open()
         {
             var mapper = Locator.Current.GetService<IMapperService>();
             var storage = Locator.Current.GetService<IStorageService>();
