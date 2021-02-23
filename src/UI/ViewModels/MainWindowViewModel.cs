@@ -1,10 +1,14 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
+using System.Reactive.Subjects;
 using System.Threading.Tasks;
 using Avalonia.Controls;
+using DynamicData;
+using DynamicData.Binding;
 using PlcMonitor.UI.Services;
 using PlcMonitor.UI.Views;
 using ReactiveUI;
@@ -14,6 +18,8 @@ namespace PlcMonitor.UI.ViewModels
 {
     public class MainWindowViewModel : ViewModelBase
     {
+        private readonly Subject<Unit> _projectPersisted = new Subject<Unit>();
+
         private ProjectViewModel _project;
         public ProjectViewModel Project
         {
@@ -23,7 +29,9 @@ namespace PlcMonitor.UI.ViewModels
 
         public ReactiveCommand<Unit, Unit> OpenCommand { get; }
         public ReactiveCommand<Unit, Unit> SaveCommand { get; }
-        public ReactiveCommand<Unit, Unit> SaveAsCommand { get; }
+        public ReactiveCommand<Unit, bool> SaveAsCommand { get; }
+
+        public IObservable<bool> HasChanges { get; }
 
         public MainWindowViewModel(ProjectViewModel projectViewModel)
         {
@@ -34,6 +42,13 @@ namespace PlcMonitor.UI.ViewModels
             OpenCommand = ReactiveCommand.CreateFromTask(Open);
             SaveCommand = ReactiveCommand.CreateFromTask(() => Save(Project.File!), canSave);
             SaveAsCommand = ReactiveCommand.CreateFromTask(SaveAs);
+
+            HasChanges = Observable.Return(false)
+                .Merge(this.WhenAnyValue(x => x.Project)
+                    .SelectMany(x => x.Plcs.ToObservableChangeSet().TransformMany(p => p.Variables).Select(_ => true)))
+                .Merge(OpenCommand.Select(_ => false))
+                .Merge(SaveCommand.Select(_ => false))
+                .Merge(SaveAsCommand.Select(x => !x));
         }
 
         private async Task Open()
@@ -62,9 +77,11 @@ namespace PlcMonitor.UI.ViewModels
 
             var mapped = mapper.MapToStorage(Project);
             await storage.Save(mapped, file);
+
+            _projectPersisted.OnNext(Unit.Default);
         }
 
-        private async Task SaveAs()
+        private async Task<bool> SaveAs()
         {
             var mainWindow = Locator.Current.GetService<MainWindow>();
 
@@ -74,11 +91,13 @@ namespace PlcMonitor.UI.ViewModels
             };
 
             var fileName = await dialog.ShowAsync(mainWindow);
-            if (fileName == null) return;
+            if (fileName == null) return false;
 
             var file = new FileInfo(fileName);
             await Save(file);
             Project.File = file;
+
+            return true;
         }
 
         private static List<FileDialogFilter> GetFileFilters()
