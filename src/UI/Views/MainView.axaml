@@ -14,7 +14,7 @@
                     <ExperimentalAcrylicMaterial TintColor="Black" MaterialOpacity="0.85" TintOpacity="1" />
                 </ExperimentalAcrylicBorder.Material>
 
-                <StackPanel Orientation="Horizontal" Margin="20 40 20 0" VerticalAlignment="Top">
+                <StackPanel Orientation="Horizontal" Margin="20 60 20 0" VerticalAlignment="Top">
                     <TextBlock FontSize="24">PlcMonitor</TextBlock>
                 </StackPanel>
             </ExperimentalAcrylicBorder>
