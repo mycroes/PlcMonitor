@@ -35,7 +35,7 @@
                 </MenuItem>
             </Menu>
 
-            <TextBlock Text="{Binding Project.File.FullName}" IsHitTestVisible="False" TextAlignment="Center" VerticalAlignment="Center" />
+            <TextBlock x:Name="_title" IsHitTestVisible="False" TextAlignment="Center" VerticalAlignment="Center" />
         </DockPanel>
 
         <ContentControl Content="{Binding Project}" />
