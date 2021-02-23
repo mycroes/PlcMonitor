@@ -31,7 +31,7 @@
                 <MenuItem Header="_File">
                     <MenuItem Header="_Open..." InputGesture="Ctrl+O" HotKey="Ctrl+O" Command="{Binding LoadCommand}" />
                     <MenuItem Header="_Save" InputGesture="Ctrl+S" HotKey="Ctrl+S" Command="{Binding SaveCommand}" />
-                    <MenuItem Header="Save as..." InputGesture="Ctrl+Shift+S" HotKey="Ctrl+Shift+S" Command="{Binding SaveAsCommand}" />
+                    <MenuItem Header="Save _As..." InputGesture="Ctrl+Shift+S" HotKey="Ctrl+Shift+S" Command="{Binding SaveAsCommand}" />
                 </MenuItem>
             </Menu>
 
