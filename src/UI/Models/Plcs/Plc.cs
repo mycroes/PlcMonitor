@@ -58,7 +58,8 @@ namespace PlcMonitor.UI.Models.Plcs
 
             if (conn.State.Value == ConnectionState.New)
             {
-                try {
+                try
+                {
                     await conn.Open();
                 }
                 catch (Exception e)
@@ -68,7 +69,8 @@ namespace PlcMonitor.UI.Models.Plcs
                 }
             }
 
-            try {
+            try
+            {
                 await job.Execute(conn.PlcConnection);
             }
             catch (Exception e)
