@@ -34,14 +34,7 @@ namespace PlcMonitor.UI.Models.Plcs
 
         public async Task Execute(IPlcConnection connection)
         {
-            try
-            {
-                await _fn.Invoke(connection);
-            }
-            catch (Exception e)
-            {
-                _error = e;
-            }
+            await _fn.Invoke(connection);
 
             IsCompleted = true;
             _continuation?.Invoke();
