@@ -7,7 +7,7 @@ namespace PlcMonitor.UI.Models.Plcs.S7
     public static class AddressParser
     {
         // Missing support for DT, DTZ, DTL, DTLZ, which are also currently not supported by Sally7
-        private static readonly Regex AddressRegex = new Regex(@"^DB(\d+),((B|BYTE|I|INT|WORD|DI|DINT|DW|DWORD|R|REAL|C|CHAR|S)(\d+)|X(\d+)\.([0-8]))$");
+        private static readonly Regex AddressRegex = new Regex(@"^DB(\d+),((B|BYTE|I|INT|WORD|DI|DINT|DW|DWORD|R|REAL|LREAL|C|CHAR|S)(\d+)|X(\d+)\.([0-7]))$");
 
         public static bool TryParse(string address, out int dataBlock, out TypeCode typeCode, out int startByte, out int? bitIndex)
         {
@@ -53,6 +53,7 @@ namespace PlcMonitor.UI.Models.Plcs.S7
                     "DWORD" => TypeCode.UInt32,
                     "R" => TypeCode.Single,
                     "REAL" => TypeCode.Single,
+                    "LREAL" => TypeCode.Double,
                     "C" => TypeCode.Byte, // S7 CHAR is 1 byte only
                     "CHAR" => TypeCode.Byte,
                     "S" => TypeCode.String,
