@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Avalonia.Controls;
 using DynamicData;
 using DynamicData.Binding;
+using PlcMonitor.UI.DI;
 using PlcMonitor.UI.Services;
 using PlcMonitor.UI.Views;
 using ReactiveUI;
@@ -20,6 +21,8 @@ namespace PlcMonitor.UI.ViewModels
     {
         private readonly Subject<Unit> _projectPersisted = new Subject<Unit>();
 
+        private readonly ProjectViewModelFactory _projectViewModelFactory;
+
         private ProjectViewModel _project;
         public ProjectViewModel Project
         {
@@ -27,6 +30,7 @@ namespace PlcMonitor.UI.ViewModels
             private set => this.RaiseAndSetIfChanged(ref _project, value);
         }
 
+        public ReactiveCommand<Unit, Unit> NewCommand { get; }
         public ReactiveCommand<Unit, Unit> OpenCommand { get; }
         public ReactiveCommand<Unit, Unit> SaveCommand { get; }
         public ReactiveCommand<Unit, bool> SaveAsCommand { get; }
@@ -35,12 +39,14 @@ namespace PlcMonitor.UI.ViewModels
 
         public ViewModelActivator Activator { get; } = new ViewModelActivator();
 
-        public MainWindowViewModel(ProjectViewModel projectViewModel)
+        public MainWindowViewModel(ProjectViewModel? projectViewModel, ProjectViewModelFactory projectViewModelFactory)
         {
-            _project = projectViewModel;
+            _project = projectViewModel ?? projectViewModelFactory.Invoke(null, Enumerable.Empty<PlcViewModel>());
+            _projectViewModelFactory = projectViewModelFactory;
 
             var canSave = this.WhenAnyValue(x => x.Project).Select(p => p.File is {});
 
+            NewCommand = ReactiveCommand.Create(New);
             OpenCommand = ReactiveCommand.CreateFromTask(Open);
             SaveCommand = ReactiveCommand.CreateFromTask(() => Save(Project.File!), canSave);
             SaveAsCommand = ReactiveCommand.CreateFromTask(SaveAs);
@@ -51,6 +57,11 @@ namespace PlcMonitor.UI.ViewModels
                 .Merge(OpenCommand.Select(_ => false))
                 .Merge(SaveCommand.Select(_ => false))
                 .Merge(SaveAsCommand.Select(x => !x));
+        }
+
+        private void New()
+        {
+            Project = _projectViewModelFactory.Invoke(null, Enumerable.Empty<PlcViewModel>());
         }
 
         private async Task Open()
