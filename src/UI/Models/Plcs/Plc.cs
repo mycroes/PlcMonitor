@@ -45,6 +45,8 @@ namespace PlcMonitor.UI.Models.Plcs
             _disposable.Dispose();
         }
 
+        protected abstract bool BreaksConnection(Exception exception);
+
         private async Task<Unit> ExecuteJob(Job job)
         {
             var conn = _connection.Value;
@@ -71,6 +73,11 @@ namespace PlcMonitor.UI.Models.Plcs
             }
             catch (Exception e)
             {
+                if (BreaksConnection(e))
+                {
+                    conn.Close();
+                }
+
                 job.Error(e);
             }
 

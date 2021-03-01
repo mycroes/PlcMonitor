@@ -1,3 +1,5 @@
+using System;
+using System.Linq;
 using Sally7.Protocol.Cotp;
 
 namespace PlcMonitor.UI.Models.Plcs.S7
@@ -23,6 +25,19 @@ namespace PlcMonitor.UI.Models.Plcs.S7
         public bool IsValidAddress(string address)
         {
             return !string.IsNullOrWhiteSpace(address) && S7.AddressParser.TryParse(address, out _, out _, out _, out _);
+        }
+
+        protected override bool BreaksConnection(Exception exception)
+        {
+            return !IsDataItemError(exception);
+        }
+
+        private bool IsDataItemError(Exception exception)
+        {
+            // Bug in Sally7, write exceptions also start with 'Read of dataItem'
+            return exception.Message.StartsWith("Read of dataItem")
+                || exception is AggregateException ae
+                && ae.InnerExceptions.All(BreaksConnection);
         }
     }
 }

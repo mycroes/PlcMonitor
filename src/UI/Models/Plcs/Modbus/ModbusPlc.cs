@@ -1,3 +1,5 @@
+using System;
+
 namespace PlcMonitor.UI.Models.Plcs.Modbus
 {
     public class ModbusPlc : Plc
@@ -16,6 +18,11 @@ namespace PlcMonitor.UI.Models.Plcs.Modbus
         public override IPlcConnection CreateConnection()
         {
             return new ModbusPlcConnection(Host, Port, UnitId);
+        }
+
+        protected override bool BreaksConnection(Exception exception)
+        {
+            return true;
         }
     }
 }
