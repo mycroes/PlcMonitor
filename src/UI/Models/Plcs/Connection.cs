@@ -21,7 +21,8 @@ namespace PlcMonitor.UI.Models.Plcs
         public async Task Open()
         {
             State.OnNext(ConnectionState.Opening);
-            try {
+            try
+            {
                 await PlcConnection.Open();
                 State.OnNext(ConnectionState.Open);
             }
@@ -35,7 +36,8 @@ namespace PlcMonitor.UI.Models.Plcs
         public void Close()
         {
             State.OnNext(ConnectionState.Closing);
-            try {
+            try
+            {
                 PlcConnection.Close();
             }
             finally
