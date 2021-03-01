@@ -4,6 +4,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:views="clr-namespace:PlcMonitor.UI.Views"
         xmlns:vm="clr-namespace:PlcMonitor.UI.ViewModels.Explorer"
+        xmlns:c="clr-namespace:PlcMonitor.UI.Controls"
         mc:Ignorable="d" d:DesignWidth="1350" d:DesignHeight="700"
         x:Class="PlcMonitor.UI.Views.ProjectView"
         FontSize="14"
@@ -13,7 +14,22 @@
         <TabControl x:Name="TabControl" Classes="sidebar" Margin="0 40 0 20" Items="{Binding Nodes}" Padding="20">
             <TabControl.ItemTemplate>
                 <DataTemplate>
-                    <TextBlock Text="{Binding Name}" />
+                    <ContentControl Content="{Binding}">
+                        <ContentControl.DataTemplates>
+                            <DataTemplate DataType="{x:Type vm:OverviewNode}">
+                                <TextBlock>Overview</TextBlock>
+                            </DataTemplate>
+                            <DataTemplate DataType="{x:Type vm:AddConnectionNode}">
+                                <TextBlock>Add connection</TextBlock>
+                            </DataTemplate>
+                            <DataTemplate DataType="{x:Type vm:PlcConnectionNode}">
+                                <Grid ColumnDefinitions="*,16">
+                                    <TextBlock Grid.Column="0" Text="{Binding Name}" />
+                                    <c:PlcConnectionIndicator Grid.Column="1" DataContext="{Binding Plc}" />
+                                </Grid>
+                            </DataTemplate>
+                        </ContentControl.DataTemplates>
+                    </ContentControl>
                 </DataTemplate>
             </TabControl.ItemTemplate>
             <TabControl.DataTemplates>

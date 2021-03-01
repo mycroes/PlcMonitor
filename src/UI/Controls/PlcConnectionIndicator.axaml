@@ -1,0 +1,15 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:PlcMonitor.UI.Controls"
+        mc:Ignorable="d" d:DesignWidth="16" d:DesignHeight="16"
+        x:Class="PlcMonitor.UI.Controls.PlcConnectionIndicator">
+
+    <Path
+        x:Name="Circle"
+        StrokeThickness="1"
+        Data="F0 M2 8 a 6 6 0 1 0 12 0 a 6 6 0 1 0 -12 0z">
+    </Path>
+</UserControl>
+
