@@ -31,7 +31,7 @@ namespace PlcMonitor.UI.Views
 
         private string CreateTitle(bool changes, FileInfo? file)
         {
-            var res = changes ? "* " : "";
+            var res = changes ? "• " : "";
 
             var title = file == null
                 ? "Untitled"
