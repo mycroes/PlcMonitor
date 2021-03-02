@@ -23,7 +23,10 @@ namespace PlcMonitor.UI.Models.Plcs
             Connection = _connection.Where(c => c is {}).Select(c => c!);
 
             _disposable = new CompositeDisposable(
-                _jobs.ObserveOn(Scheduler.Default).SelectMany(ExecuteJob).Subscribe(),
+                _jobs.ObserveOn(Scheduler.Default)
+                    .Select(job => Observable.FromAsync(() => ExecuteJob(job)))
+                    .Concat()
+                    .Subscribe(),
                 Disposable.Create(() => {
                      if (_connection.Value?.State.Value > ConnectionState.New && _connection.Value?.State.Value < ConnectionState.Closing)
                         _connection.Value.Close();
