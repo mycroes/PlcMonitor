@@ -1,0 +1,33 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:PlcMonitor.UI.ViewModels"
+        mc:Ignorable="d" d:DesignWidth="1350" d:DesignHeight="700"
+        x:Class="PlcMonitor.UI.Views.GroupView">
+
+    <StackPanel Margin="10 0 0 0" VerticalAlignment="Stretch">
+        <TextBlock Text="Group" />
+        <StackPanel Orientation="Horizontal">
+            <Button Command="{Binding AddGroupCommand}">Add group</Button>
+        </StackPanel>
+
+        <StackPanel>
+            <Border>
+                <ItemsControl Items="{Binding SubGroups}" />
+            </Border>
+
+            <Border>
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Button Command="{Binding AddCommand}">Add variable</Button>
+                        <Button Command="{Binding ReadCommand}">Read</Button>
+                    </StackPanel>
+
+                    <DataGrid Name="_variables" Items="{Binding Variables}" HorizontalAlignment="Stretch" />
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </StackPanel>
+
+</UserControl>

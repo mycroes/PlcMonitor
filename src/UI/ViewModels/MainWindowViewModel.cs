@@ -53,7 +53,7 @@ namespace PlcMonitor.UI.ViewModels
 
             HasChanges = Observable.Return(false)
                 .Merge(this.WhenAnyValue(x => x.Project)
-                    .SelectMany(x => x.Plcs.ToObservableChangeSet().TransformMany(p => p.Variables).Select(_ => true)))
+                    .SelectMany(x => x.Plcs.ToObservableChangeSet().TransformMany(p => p.Root.Variables).Select(_ => true)))
                 .Merge(OpenCommand.Select(_ => false))
                 .Merge(SaveCommand.Select(_ => false))
                 .Merge(SaveAsCommand.Select(x => !x));

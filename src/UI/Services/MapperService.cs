@@ -33,9 +33,19 @@ namespace PlcMonitor.UI.Services
 
         private PlcViewModel MapFromStorage(PlcConfiguration plc)
         {
-            var res = _plcViewModelFactory.Invoke( plc.Plc, plc.Name, plc.Variables.Select(v => MapFromStorage(plc.Plc, v)) );
+            var res = _plcViewModelFactory.Invoke( plc.Plc, plc.Name );
+            res.Root = MapFromStorage(res, plc.Root);
 
             return res;
+        }
+
+        private static GroupViewModel MapFromStorage(PlcViewModel plc, Group group)
+        {
+            var vm = new GroupViewModel(plc, group.Name);
+            vm.SubGroups.AddRange(group.SubGroups.Select(g => MapFromStorage(plc, g)));
+            vm.Variables.AddRange(group.Variables.Select(v => MapFromStorage(plc.Plc, v)));
+
+            return vm;
         }
 
         private static VariableViewModel MapFromStorage(IPlc plc, Variable variable)
@@ -62,7 +72,13 @@ namespace PlcMonitor.UI.Services
 
         private static PlcConfiguration MapToStorage(PlcViewModel plc)
         {
-            return new PlcConfiguration(plc.Name, plc.Plc, plc.Variables.Select(MapToStorage));
+            return new PlcConfiguration(plc.Name, plc.Plc, MapToStorage(plc.Root));
+        }
+
+        private static Group MapToStorage(GroupViewModel group)
+        {
+            return new Group(group.Name, group.SubGroups.Select(MapToStorage),
+                group.Variables.Select(MapToStorage));
         }
 
         private static Variable MapToStorage(VariableViewModel variable)

@@ -7,11 +7,7 @@
         x:Class="PlcMonitor.UI.Views.PlcView">
 
     <DockPanel VerticalAlignment="Stretch">
-        <Button DockPanel.Dock="Top" Command="{Binding AddCommand}">Add variable</Button>
-
-        <Button DockPanel.Dock="Bottom" Command="{Binding ReadCommand}">Read</Button>
-
-        <DataGrid Name="_variables" Items="{Binding Variables}" HorizontalAlignment="Stretch" />
+        <ContentControl Content="{Binding Root}" />
     </DockPanel>
 
 </UserControl>

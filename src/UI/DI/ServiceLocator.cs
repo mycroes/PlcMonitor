@@ -33,8 +33,8 @@ namespace PlcMonitor.UI.DI
             locator.Register<IMapperService>(() => new MapperService(Get<ProjectViewModelFactory>(), Get<PlcViewModelFactory>()));
             locator.Register<IPlcInteractionManager>(() => new PlcInteractionManager());
 
-            locator.RegisterFactory<PlcViewModelFactory>((plc, name, variables) => new PlcViewModel(
-                plc, name, variables, Get<IPlcInteractionManager>(), Get<INotificationManager>()));
+            locator.RegisterFactory<PlcViewModelFactory>((plc, name) => new PlcViewModel(
+                plc, name, Get<IPlcInteractionManager>(), Get<INotificationManager>()));
 
             locator.RegisterFactory<AddConnectionNodeFactory>((project) => new AddConnectionNode(project, Get<PlcViewModelFactory>()));
             locator.RegisterFactory<ProjectViewModelFactory>((file, plcs) => new ProjectViewModel(file, plcs, Get<AddConnectionNodeFactory>()));
@@ -54,7 +54,7 @@ namespace PlcMonitor.UI.DI
         }
     }
 
-    public delegate PlcViewModel PlcViewModelFactory(IPlc plc, string name, IEnumerable<VariableViewModel> variables);
+    public delegate PlcViewModel PlcViewModelFactory(IPlc plc, string name);
     public delegate AddConnectionNode AddConnectionNodeFactory(ProjectViewModel project);
     public delegate ProjectViewModel ProjectViewModelFactory(FileInfo? file, IEnumerable<PlcViewModel> plcs);
 }

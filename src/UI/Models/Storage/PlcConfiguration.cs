@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using PlcMonitor.UI.Models.Plcs;
 
 namespace PlcMonitor.UI.Models.Storage
@@ -9,13 +8,13 @@ namespace PlcMonitor.UI.Models.Storage
 
         public IPlc Plc { get; }
 
-        public IEnumerable<Variable> Variables { get; }
+        public Group Root { get; }
 
-        public PlcConfiguration(string name, IPlc plc, IEnumerable<Variable> variables)
+        public PlcConfiguration(string name, IPlc plc, Group root)
         {
             Name = name;
             Plc = plc;
-            Variables = variables;
+            Root = root;
         }
     }
 }

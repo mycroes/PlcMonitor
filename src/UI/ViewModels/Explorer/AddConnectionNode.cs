@@ -66,7 +66,7 @@ namespace PlcMonitor.UI.ViewModels.Explorer
         private void Add()
         {
             _project.Plcs.Add(_plcViewModelFactory.Invoke(
-                Configuration!.CreatePlc(), Configuration!.Name!, Enumerable.Empty<VariableViewModel>()));
+                Configuration!.CreatePlc(), Configuration!.Name!));
 
             Configurations = BuildConfigurations().ToList();
             Configuration = Configurations.First();

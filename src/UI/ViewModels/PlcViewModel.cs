@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Reactive;
+using System.Reactive.Concurrency;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using Avalonia.Controls.Notifications;
-using DynamicData.Binding;
 using PlcMonitor.UI.Models.Plcs;
 using ReactiveUI;
 
@@ -20,13 +20,12 @@ namespace PlcMonitor.UI.ViewModels
 
         public IPlc Plc { get;}
 
-        public ObservableCollectionExtended<VariableViewModel> Variables { get; } = new();
-
-        public ReactiveCommand<Unit, VariableViewModel> AddCommand { get; }
-
-        public ReactiveCommand<Unit, Unit> ReadCommand { get; }
-
-        public ReactiveCommand<VariableViewModel, Unit> UpdateCommand { get; }
+        private GroupViewModel _root;
+        public GroupViewModel Root
+        {
+            get => _root;
+            set => this.RaiseAndSetIfChanged(ref _root, value);
+        }
 
         public ViewModelActivator Activator { get; } = new ViewModelActivator();
 
@@ -38,38 +37,24 @@ namespace PlcMonitor.UI.ViewModels
 
             Plc = plc;
             Name = name;
-
-            AddCommand = ReactiveCommand.Create<VariableViewModel>(Add);
-            ReadCommand = ReactiveCommand.CreateFromTask(Read);
-            UpdateCommand = ReactiveCommand.Create<VariableViewModel>(Update);
-
-            this.WhenActivated(disposables => {
-                ReadCommand.ThrownExceptions.ObserveOn(RxApp.MainThreadScheduler).Subscribe(e =>
-                    _notificationManager.Show(new Avalonia.Controls.Notifications.Notification(
-                        "Failed to read from PLC", e.Message, NotificationType.Error))).DisposeWith(disposables);
-            });
+            _root = new GroupViewModel(this, string.Empty);
         }
 
-        public PlcViewModel(IPlc plc, string name, IEnumerable<VariableViewModel> variables,
-            IPlcInteractionManager plcInteractionManager, INotificationManager notificationManager)
-            : this(plc, name, plcInteractionManager, notificationManager)
+        public VariableViewModel CreateVariable()
         {
-            Variables.AddRange(variables);
+            return _plcInteractionManager.CreateVariable(Plc);
         }
 
-        private VariableViewModel Add()
-        {
-            var variable = _plcInteractionManager.CreateVariable(Plc);
-            Variables.Add(variable);
-
-            return variable;
-        }
-
-        private Task Read() => _plcInteractionManager.Read(Plc, Variables);
-
-        private void Update(VariableViewModel variable)
-        {
-            variable.Update();
+        public async Task Read(GroupViewModel group) {
+            try
+            {
+                await _plcInteractionManager.Read(Plc, group.Variables);
+            }
+            catch (Exception e)
+            {
+                RxApp.MainThreadScheduler.Schedule(() => _notificationManager.Show(new Avalonia.Controls.Notifications.Notification(
+                    "Failed to read from PLC", e.Message, NotificationType.Error)));
+            }
         }
     }
 }
