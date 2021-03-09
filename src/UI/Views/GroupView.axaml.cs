@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using Avalonia.Controls;
@@ -36,6 +37,16 @@ namespace PlcMonitor.UI.Views
                     .DisposeWith(disposables);
 
                 ViewModel.AddCommand.Subscribe(v => _variables.ScrollIntoView(v, null)).DisposeWith(disposables);
+
+                Observable.FromEventPattern<SelectionChangedEventArgs>(_variables, nameof(_variables.SelectionChanged))
+                    .Select(e => e.EventArgs.AddedItems.Cast<VariableViewModel>())
+                    .Subscribe(items => ViewModel.SelectedVariables.AddRange(items))
+                    .DisposeWith(disposables);
+
+                Observable.FromEventPattern<SelectionChangedEventArgs>(_variables, nameof(_variables.SelectionChanged))
+                    .Select(e => e.EventArgs.RemovedItems.Cast<VariableViewModel>())
+                    .Subscribe(items => ViewModel.SelectedVariables.RemoveMany(items))
+                    .DisposeWith(disposables);
 
                 _variables.Columns.AddRange(GenerateColumns(ViewModel.Plc.Plc));
             });

@@ -19,6 +19,8 @@ namespace PlcMonitor.UI.ViewModels
 
         public ObservableCollectionExtended<VariableViewModel> Variables { get; } = new();
 
+        public ObservableCollectionExtended<VariableViewModel> SelectedVariables { get; } = new();
+
         public ReactiveCommand<Unit, VariableViewModel> AddCommand { get; }
 
         public ReactiveCommand<Unit, GroupViewModel> AddGroupCommand { get; }
