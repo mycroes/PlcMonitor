@@ -1,5 +1,7 @@
 using System.Reactive;
+using System.Reactive.Linq;
 using DynamicData.Binding;
+using PlcMonitor.UI.DI;
 using ReactiveUI;
 
 namespace PlcMonitor.UI.ViewModels
@@ -29,13 +31,13 @@ namespace PlcMonitor.UI.ViewModels
 
         public ReactiveCommand<VariableViewModel, Unit> UpdateCommand { get; }
 
-        public GroupViewModel(PlcViewModel plc, string name)
+        public GroupViewModel(PlcViewModel plc, string name, ShowDialog showDialog, GroupViewModelFactory groupFactory)
         {
             Plc = plc;
             _name = name;
 
             AddGroupCommand = ReactiveCommand.Create<GroupViewModel>(() => {
-                var group = new GroupViewModel(Plc, string.Empty);
+                var group = groupFactory.Invoke(Plc, string.Empty);
                 SubGroups.Add(group);
 
                 return group;

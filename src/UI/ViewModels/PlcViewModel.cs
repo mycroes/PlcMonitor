@@ -6,6 +6,7 @@ using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using Avalonia.Controls.Notifications;
+using PlcMonitor.UI.DI;
 using PlcMonitor.UI.Models.Plcs;
 using ReactiveUI;
 
@@ -30,14 +31,14 @@ namespace PlcMonitor.UI.ViewModels
         public ViewModelActivator Activator { get; } = new ViewModelActivator();
 
         public PlcViewModel(IPlc plc, string name, IPlcInteractionManager plcInteractionManager,
-            INotificationManager notificationManager)
+            INotificationManager notificationManager, GroupViewModelFactory groupFactory)
         {
             _plcInteractionManager = plcInteractionManager;
             _notificationManager = notificationManager;
 
             Plc = plc;
             Name = name;
-            _root = new GroupViewModel(this, string.Empty);
+            _root = groupFactory.Invoke(this, string.Empty);
         }
 
         public VariableViewModel CreateVariable()

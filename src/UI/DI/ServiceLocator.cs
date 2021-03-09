@@ -31,13 +31,17 @@ namespace PlcMonitor.UI.DI
             };
 
             locator.Register<IStorageService>(() => new StorageService(jsonSerializerOptions));
-            locator.Register<IMapperService>(() => new MapperService(Get<ProjectViewModelFactory>(), Get<PlcViewModelFactory>()));
+            locator.Register<IMapperService>(() => new MapperService(Get<ProjectViewModelFactory>(), Get<PlcViewModelFactory>(), Get<GroupViewModelFactory>()));
             locator.Register<IPlcInteractionManager>(() => new PlcInteractionManager());
 
             locator.RegisterLazySingleton<MainWindowViewModel>(() => new MainWindowViewModel(null, Get<ProjectViewModelFactory>()));
 
             locator.RegisterFactory<PlcViewModelFactory>((plc, name) => new PlcViewModel(
-                plc, name, Get<IPlcInteractionManager>(), Get<INotificationManager>()));
+                plc, name, Get<IPlcInteractionManager>(), Get<INotificationManager>(), Get<GroupViewModelFactory>()));
+
+            locator.RegisterFactory<GroupViewModelFactory>((plc, name) => new GroupViewModel(
+                plc, name, Get<ShowDialog>(), Get<GroupViewModelFactory>()
+            ));
 
             locator.RegisterFactory<AddConnectionNodeFactory>((project) => new AddConnectionNode(project, Get<PlcViewModelFactory>()));
             locator.RegisterFactory<ProjectViewModelFactory>((file, plcs) => new ProjectViewModel(file, plcs, Get<AddConnectionNodeFactory>()));

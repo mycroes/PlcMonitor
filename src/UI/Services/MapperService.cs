@@ -14,11 +14,14 @@ namespace PlcMonitor.UI.Services
     {
         private readonly ProjectViewModelFactory _projectViewModelFactory;
         private readonly PlcViewModelFactory _plcViewModelFactory;
+        private readonly GroupViewModelFactory _groupViewModelFactory;
 
-        public MapperService(ProjectViewModelFactory projectViewModelFactory, PlcViewModelFactory plcViewModelFactory)
+        public MapperService(ProjectViewModelFactory projectViewModelFactory, PlcViewModelFactory plcViewModelFactory,
+            GroupViewModelFactory groupViewModelFactory)
         {
             _projectViewModelFactory = projectViewModelFactory;
             _plcViewModelFactory = plcViewModelFactory;
+            _groupViewModelFactory = groupViewModelFactory;
         }
 
         public ProjectViewModel MapFromStorage(FileInfo file, Project project)
@@ -39,9 +42,9 @@ namespace PlcMonitor.UI.Services
             return res;
         }
 
-        private static GroupViewModel MapFromStorage(PlcViewModel plc, Group group)
+        private GroupViewModel MapFromStorage(PlcViewModel plc, Group group)
         {
-            var vm = new GroupViewModel(plc, group.Name);
+            var vm = _groupViewModelFactory.Invoke(plc, group.Name);
             vm.SubGroups.AddRange(group.SubGroups.Select(g => MapFromStorage(plc, g)));
             vm.Variables.AddRange(group.Variables.Select(v => MapFromStorage(plc.Plc, v)));
 
