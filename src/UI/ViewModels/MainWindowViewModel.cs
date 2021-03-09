@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reactive;
+using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Threading.Tasks;
@@ -30,10 +31,18 @@ namespace PlcMonitor.UI.ViewModels
             private set => this.RaiseAndSetIfChanged(ref _project, value);
         }
 
+        private IDialogContentViewModel? _dialogContent;
+        public IDialogContentViewModel? DialogContent
+        {
+            get => _dialogContent;
+            set => this.RaiseAndSetIfChanged(ref _dialogContent, value);
+        }
+
         public ReactiveCommand<Unit, Unit> NewCommand { get; }
         public ReactiveCommand<Unit, Unit> OpenCommand { get; }
         public ReactiveCommand<Unit, Unit> SaveCommand { get; }
         public ReactiveCommand<Unit, bool> SaveAsCommand { get; }
+        public ReactiveCommand<Unit, Unit> CloseDialogCommand { get; }
 
         public IObservable<bool> HasChanges { get; }
 
@@ -51,12 +60,28 @@ namespace PlcMonitor.UI.ViewModels
             SaveCommand = ReactiveCommand.CreateFromTask(() => Save(Project.File!), canSave);
             SaveAsCommand = ReactiveCommand.CreateFromTask(SaveAs);
 
+            CloseDialogCommand = ReactiveCommand.Create(() => { DialogContent = null; });
+
             HasChanges = Observable.Return(false)
                 .Merge(this.WhenAnyValue(x => x.Project)
                     .SelectMany(x => x.Plcs.ToObservableChangeSet().TransformMany(p => p.Root.Variables).Select(_ => true)))
                 .Merge(OpenCommand.Select(_ => false))
                 .Merge(SaveCommand.Select(_ => false))
                 .Merge(SaveAsCommand.Select(x => !x));
+
+            this.WhenActivated(disposables => {
+                this.WhenAnyValue(x => x.DialogContent)
+                    .Where(c => c is {})
+                    .SelectMany(c => c!.Close)
+                    .InvokeCommand(CloseDialogCommand)
+                    .DisposeWith(disposables);
+            });
+        }
+
+        public async Task ShowDialog(IDialogContentViewModel content)
+        {
+            DialogContent = content;
+            await CloseDialogCommand.FirstAsync();
         }
 
         private void New()

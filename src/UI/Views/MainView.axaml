@@ -44,5 +44,25 @@
         </DockPanel>
 
         <ContentControl Content="{Binding Project}" />
+
+        <Grid IsVisible="{Binding !!DialogContent}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="32" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <Border Background="Black" Opacity="0.5" Grid.Row="0" IsHitTestVisible="False" />
+                <Border Background="Black" Opacity="0.5" Grid.Row="1" IsHitTestVisible="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            </Border>
+            </Grid>
+            <Border x:Name="Dialog" CornerRadius="3" MinWidth="400" MinHeight="200" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <Border Background="#444" Opacity="1">
+                    <Grid>
+                        <ContentControl Content="{Binding DialogContent}" />
+                        <Button Command="{Binding CloseDialogCommand}" HorizontalAlignment="Right" VerticalAlignment="Top">🗙</Button>
+                    </Grid>
+                </Border>
+            </Border>
+        </Grid>
     </Panel>
 </UserControl>
