@@ -3,7 +3,8 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:views="clr-namespace:PlcMonitor.UI.Views"
-        xmlns:vm="clr-namespace:PlcMonitor.UI.ViewModels.Explorer"
+        xmlns:explorer="clr-namespace:PlcMonitor.UI.ViewModels.Explorer"
+        xmlns:viewModels="clr-namespace:PlcMonitor.UI.ViewModels"
         xmlns:c="clr-namespace:PlcMonitor.UI.Controls"
         mc:Ignorable="d" d:DesignWidth="1350" d:DesignHeight="700"
         x:Class="PlcMonitor.UI.Views.ProjectView"
@@ -11,41 +12,38 @@
         Foreground="{StaticResource SystemBaseHighColor}">
 
     <Panel>
-        <TabControl x:Name="TabControl" Classes="sidebar" Margin="0 40 0 20" Items="{Binding Nodes}" Padding="20">
-            <TabControl.ItemTemplate>
-                <DataTemplate>
-                    <ContentControl Content="{Binding}">
-                        <ContentControl.DataTemplates>
-                            <DataTemplate DataType="{x:Type vm:OverviewNode}">
-                                <TextBlock>Overview</TextBlock>
-                            </DataTemplate>
-                            <DataTemplate DataType="{x:Type vm:AddConnectionNode}">
-                                <TextBlock>Add connection</TextBlock>
-                            </DataTemplate>
-                            <DataTemplate DataType="{x:Type vm:PlcConnectionNode}">
-                                <Grid ColumnDefinitions="*,16">
-                                    <TextBlock Grid.Column="0" Text="{Binding Name}" />
-                                    <c:PlcConnectionIndicator Grid.Column="1" DataContext="{Binding Plc}" />
-                                </Grid>
-                            </DataTemplate>
-                        </ContentControl.DataTemplates>
-                    </ContentControl>
-                </DataTemplate>
-            </TabControl.ItemTemplate>
-            <TabControl.DataTemplates>
-                <DataTemplate DataType="{x:Type vm:OverviewNode}">
+        <TreeView x:Name="Explorer" Items="{Binding Nodes}" Margin="0 100 0 20" Width="240" HorizontalAlignment="Left">
+            <TreeView.DataTemplates>
+                <TreeDataTemplate DataType="{x:Type explorer:PlcConnectionNode}" ItemsSource="{Binding Plc.Root.SubGroups}">
+                    <Grid ColumnDefinitions="*,20">
+                        <TextBlock Grid.Column="0" Text="{Binding Name}" />
+                        <c:PlcConnectionIndicator Grid.Column="1" DataContext="{Binding Plc}" />
+                    </Grid>
+                </TreeDataTemplate>
+                <TreeDataTemplate DataType="{x:Type viewModels:GroupViewModel}" ItemsSource="{Binding SubGroups}">
+                    <TextBlock Text="{Binding Name}" />
+                </TreeDataTemplate>
+                <DataTemplate DataType="{x:Type explorer:OverviewNode}">
+                        <TextBlock>Overview</TextBlock>
+                    </DataTemplate>
+                    <DataTemplate DataType="{x:Type explorer:AddConnectionNode}">
+                        <TextBlock>Add connection</TextBlock>
+                    </DataTemplate>
+            </TreeView.DataTemplates>
+        </TreeView>
+
+        <ContentControl Margin="240 30 0 20" Content="{Binding #Explorer.SelectedItem}">
+            <ContentControl.DataTemplates>
+                <DataTemplate DataType="{x:Type explorer:OverviewNode}">
                     <TextBlock>Overview</TextBlock>
                 </DataTemplate>
-                <DataTemplate DataType="{x:Type vm:AddConnectionNode}">
+                <DataTemplate DataType="{x:Type explorer:AddConnectionNode}">
                     <views:AddConnectionView />
                 </DataTemplate>
-                <DataTemplate DataType="{x:Type vm:PlcConnectionNode}">
+                <DataTemplate DataType="{x:Type explorer:PlcConnectionNode}">
                     <views:PlcConnectionView />
                 </DataTemplate>
-            </TabControl.DataTemplates>
-            <TabControl.Styles>
-                <StyleInclude Source="/Styles/SideBar.axaml" />
-            </TabControl.Styles>
-        </TabControl>
+            </ContentControl.DataTemplates>
+        </ContentControl>
     </Panel>
 </UserControl>
