@@ -25,6 +25,7 @@
             <Border Grid.Column="1">
                 <StackPanel Orientation="Horizontal">
                     <Button Command="{Binding ReadCommand}">Read</Button>
+                    <Button Command="{Binding WriteCommand}">Write</Button>
                     <Button Command="{Binding AddCommand}">Add variable</Button>
                     <Button Command="{Binding AddGroupCommand}">Add nested group</Button>
                 </StackPanel>

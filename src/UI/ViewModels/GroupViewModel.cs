@@ -31,6 +31,8 @@ namespace PlcMonitor.UI.ViewModels
 
         public ReactiveCommand<VariableViewModel, Unit> UpdateCommand { get; }
 
+        public ReactiveCommand<Unit, Unit> WriteCommand { get; }
+
         public GroupViewModel(PlcViewModel plc, string name, ShowDialog showDialog, GroupViewModelFactory groupFactory)
         {
             Plc = plc;
@@ -46,6 +48,9 @@ namespace PlcMonitor.UI.ViewModels
             AddCommand = ReactiveCommand.Create<VariableViewModel>(Add);
             ReadCommand = ReactiveCommand.CreateFromTask(() => plc.Read(this));
             UpdateCommand = ReactiveCommand.Create<VariableViewModel>(Update);
+
+            var canWrite = SelectedVariables.WhenValueChanged(x => x.Count).Select(c => c > 0);
+            WriteCommand = ReactiveCommand.CreateFromTask(() => showDialog(new WriteViewModel(Plc, SelectedVariables)), canWrite);
         }
 
         private VariableViewModel Add()
