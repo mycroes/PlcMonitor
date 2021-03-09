@@ -7,27 +7,40 @@
         x:Class="PlcMonitor.UI.Views.GroupView">
 
     <StackPanel Margin="10 0 0 0" VerticalAlignment="Stretch">
-        <TextBlock Text="Group" />
-        <StackPanel Orientation="Horizontal">
-            <Button Command="{Binding AddGroupCommand}">Add group</Button>
-        </StackPanel>
+        <Grid ColumnDefinitions="*,Auto">
+            <TextBox Classes="H" Text="{Binding Name}" FontSize="20">
+                <TextBox.Styles>
+                    <Style Selector="TextBox.H /template/ Border#PART_BorderElement">
+                        <Setter Property="Background" Value="{x:Null}"/>
+                        <Setter Property="BorderBrush" Value="{x:Null}"/>
+                    </Style>
 
-        <StackPanel>
-            <Border>
-                <ItemsControl Items="{Binding SubGroups}" />
-            </Border>
+                    <Style Selector="TextBox.H:focus /template/ Border#PART_BorderElement">
+                        <Setter Property="Background" Value="{DynamicResource TextControlBackgroundFocused}"/>
+                        <Setter Property="BorderBrush" Value="{DynamicResource TextControlBorderBrushFocused}"/>
+                    </Style>
+                </TextBox.Styles>
+            </TextBox>
 
-            <Border>
-                <StackPanel>
-                    <StackPanel Orientation="Horizontal">
-                        <Button Command="{Binding AddCommand}">Add variable</Button>
-                        <Button Command="{Binding ReadCommand}">Read</Button>
-                    </StackPanel>
-
-                    <DataGrid Name="_variables" Items="{Binding Variables}" HorizontalAlignment="Stretch" />
+            <Border Grid.Column="1">
+                <StackPanel Orientation="Horizontal">
+                    <Button Command="{Binding ReadCommand}">Read</Button>
+                    <Button Command="{Binding AddCommand}">Add variable</Button>
+                    <Button Command="{Binding AddGroupCommand}">Add nested group</Button>
                 </StackPanel>
             </Border>
-        </StackPanel>
+        </Grid>
+
+        <DataGrid Name="_variables" Items="{Binding Variables}" HorizontalAlignment="Stretch" />
+
+        <Border BorderBrush="#888" BorderThickness="1" IsVisible="{Binding !!SubGroups.Count}">
+            <StackPanel>
+                <TextBlock Text="{Binding Name, StringFormat=Groups in {0}}" FontSize="20" />
+
+                <ItemsControl Items="{Binding SubGroups}" />
+
+            </StackPanel>
+        </Border>
     </StackPanel>
 
 </UserControl>
