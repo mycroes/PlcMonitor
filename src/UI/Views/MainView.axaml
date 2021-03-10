@@ -26,7 +26,7 @@
             </ExperimentalAcrylicBorder>
         </DockPanel>
 
-        <DockPanel HorizontalAlignment="Stretch" VerticalAlignment="Top">
+        <DockPanel HorizontalAlignment="Stretch" VerticalAlignment="Top" IsHitTestVisible="{Binding !IsDialogOpen^}">
             <Menu DockPanel.Dock="Left">
                 <MenuItem Header="_File">
                     <MenuItem Header="_New" InputGesture="Ctrl+N" HotKey="Ctrl+N" Command="{Binding NewCommand}" />
