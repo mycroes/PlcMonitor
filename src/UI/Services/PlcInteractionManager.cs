@@ -37,6 +37,17 @@ public class PlcInteractionManager : IPlcInteractionManager
         return Task.CompletedTask;
     }
 
+    public Task Write(IPlc plc, IDictionary<VariableViewModel, object?> variableValues)
+    {
+        switch (plc)
+        {
+            case S7Plc s7plc:
+                return WriteS7(s7plc, variableValues.Select(x => (Variable: (S7VariableViewModel) x.Key, Value: x.Value)));
+        }
+
+        return Task.CompletedTask;
+    }
+
     private async Task ReadS7(S7Plc plc, IEnumerable<S7VariableViewModel> variables)
     {
         object GetValue(IDataItem dataItem)
@@ -52,5 +63,24 @@ public class PlcInteractionManager : IPlcInteractionManager
         {
             variable.PushValue(new ReceivedValue(GetValue(dataItem), DateTimeOffset.Now));
         }
+    }
+
+    private Task WriteS7(S7Plc plc, IEnumerable<(S7VariableViewModel variable, object value)> variableValues)
+    {
+        void SetValue(IDataItem dataItem, object? value)
+        {
+            dataItem.GetType().GetProperty(nameof(IDataItem<int>.Value))!.SetValue(dataItem, value);
+        }
+
+        IDataItem BuildAndApply((S7VariableViewModel variable, object? value) variableValue)
+        {
+            var (variable, value) = variableValue;
+            var di = DataItemBuilder.BuildDataItem(variable.Address, variable.Length);
+            SetValue(di, value);
+
+            return di;
+        }
+
+        return plc.Schedule(conn => ((IS7PlcConnection) conn).Write(variableValues.Select(BuildAndApply)));
     }
 }

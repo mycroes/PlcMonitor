@@ -8,4 +8,6 @@ public interface IPlcInteractionManager
     VariableViewModel CreateVariable(IPlc plc);
 
     Task Read(IPlc plc, IEnumerable<VariableViewModel> variables);
+
+    Task Write(IPlc plc, IDictionary<VariableViewModel, object?> variableValues);
 }

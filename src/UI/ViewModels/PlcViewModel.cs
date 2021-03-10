@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reactive;
 using System.Reactive.Concurrency;
 using System.Reactive.Disposables;
@@ -56,6 +57,24 @@ namespace PlcMonitor.UI.ViewModels
                 RxApp.MainThreadScheduler.Schedule(() => _notificationManager.Show(new Avalonia.Controls.Notifications.Notification(
                     "Failed to read from PLC", e.Message, NotificationType.Error)));
             }
+        }
+
+        public async Task<bool> Write(WriteViewModel write)
+        {
+            try
+            {
+                await _plcInteractionManager.Write(Plc,
+                    write.VariableValues.Where(v => v.Value != string.Empty).ToDictionary(v => v.Variable, v => v.ParsedValue));
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                RxApp.MainThreadScheduler.Schedule(() => _notificationManager.Show(new Avalonia.Controls.Notifications.Notification(
+                    "Failed to write to PLC", e.Message, NotificationType.Error)));
+            }
+
+            return false;
         }
     }
 }

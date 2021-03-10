@@ -29,5 +29,10 @@ namespace PlcMonitor.UI.Models.Plcs.S7
         {
             return Sally7Connection.ReadAsync(dataItems.ToArray());
         }
+
+        public Task Write(IEnumerable<IDataItem> dataItems)
+        {
+            return Sally7Connection.WriteAsync(dataItems.ToArray());
+        }
     }
 }
