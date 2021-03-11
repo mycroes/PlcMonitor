@@ -28,7 +28,7 @@ namespace PlcMonitor.UI.Models.Plcs.S7
                     nameof(address));
 
             var type = TypeCodeLookup.TypeCodeToType(typeCode);
-            if (length > 1) type = type.MakeArrayType();
+            if (type != typeof(string) && length > 1) type = type.MakeArrayType();
 
             return (IDataItem) GenericBuildMethod.MakeGenericMethod(type).Invoke(
                 null, new object[] { dataBlock, startByte, bitIndex ?? 0, length })!;

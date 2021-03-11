@@ -24,7 +24,7 @@ namespace PlcMonitor.UI.Infrastructure
 
             if (reader.TokenType == JsonTokenType.EndArray) return variable;
 
-            var value = JsonSerializer.Deserialize(ref reader, GetValueType(variable.TypeCode, variable.Length > 1));
+            var value = JsonSerializer.Deserialize(ref reader, GetValueType(variable.TypeCode, variable.Length));
             if (value == null) throw Ex("Variable value can't be null");
 
             AssertRead(ref reader, "Failed to move to lastChange token");
@@ -48,7 +48,7 @@ namespace PlcMonitor.UI.Infrastructure
 
             if (value.State is { })
             {
-                JsonSerializer.Serialize(writer, value.State.Value, GetValueType(value.TypeCode, value.Length > 1));
+                JsonSerializer.Serialize(writer, value.State.Value, GetValueType(value.TypeCode, value.Length));
                 JsonSerializer.Serialize(writer, value.State.LastChange);
                 JsonSerializer.Serialize(writer, value.State.LastRead);
             }
@@ -56,7 +56,12 @@ namespace PlcMonitor.UI.Infrastructure
             writer.WriteEndArray();
         }
 
-        private Type GetValueType(TypeCode typeCode, bool isArray)
+        private static Type GetValueType(TypeCode typeCode, int length)
+        {
+            return typeCode == TypeCode.String ? typeof(string) : GetValueType(typeCode, length > 1);
+        }
+
+        private static Type GetValueType(TypeCode typeCode, bool isArray)
         {
             if (isArray) return GetValueType(typeCode, false).MakeArrayType();
 
