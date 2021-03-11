@@ -19,14 +19,14 @@ namespace PlcMonitor.UI.Services
         {
             using var stream = file.Open(FileMode.OpenOrCreate, FileAccess.Write);
             stream.SetLength(0);
-            await JsonSerializer.SerializeAsync(stream, project, _options);
+            await JsonSerializer.SerializeAsync(stream, project, _options).ConfigureAwait(false);
         }
 
         public async Task<Project> Load(FileInfo file)
         {
             using var stream = file.OpenRead();
 
-            return await JsonSerializer.DeserializeAsync<Project>(stream, _options) ??
+            return await JsonSerializer.DeserializeAsync<Project>(stream, _options).ConfigureAwait(false) ??
                 throw new Exception($"Failed to deserialize project from '{file.FullName}'.");
         }
     }

@@ -55,7 +55,7 @@
                 <Border Background="Black" Opacity="0.5" Grid.Row="1" IsHitTestVisible="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
             </Border>
             </Grid>
-            <Border x:Name="Dialog" CornerRadius="3" MinWidth="400" MinHeight="200" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <Border x:Name="Dialog" CornerRadius="3" MinWidth="400" MinHeight="100" HorizontalAlignment="Center" VerticalAlignment="Center">
                 <Border Background="#444" Opacity="1">
                     <Grid>
                         <ContentControl Content="{Binding DialogContent}" />

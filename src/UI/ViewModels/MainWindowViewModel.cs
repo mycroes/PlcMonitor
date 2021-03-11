@@ -28,7 +28,7 @@ namespace PlcMonitor.UI.ViewModels
         public ProjectViewModel Project
         {
             get => _project;
-            private set => this.RaiseAndSetIfChanged(ref _project, value);
+            set => this.RaiseAndSetIfChanged(ref _project, value);
         }
 
         private IDialogContentViewModel? _dialogContent;
@@ -40,6 +40,7 @@ namespace PlcMonitor.UI.ViewModels
 
         public ReactiveCommand<Unit, Unit> NewCommand { get; }
         public ReactiveCommand<Unit, Unit> OpenCommand { get; }
+        public ReactiveCommand<string, Unit> OpenFileCommand { get; }
         public ReactiveCommand<Unit, Unit> SaveCommand { get; }
         public ReactiveCommand<Unit, bool> SaveAsCommand { get; }
         public ReactiveCommand<Unit, Unit> CloseDialogCommand { get; }
@@ -57,6 +58,7 @@ namespace PlcMonitor.UI.ViewModels
 
             NewCommand = ReactiveCommand.Create(New);
             OpenCommand = ReactiveCommand.CreateFromTask(Open);
+            OpenFileCommand = ReactiveCommand.CreateFromTask<string>(OpenFile);
             SaveCommand = ReactiveCommand.CreateFromTask(() => Save(Project.File!), canSave);
             SaveAsCommand = ReactiveCommand.CreateFromTask(SaveAs);
 
@@ -65,7 +67,7 @@ namespace PlcMonitor.UI.ViewModels
             HasChanges = Observable.Return(false)
                 .Merge(this.WhenAnyValue(x => x.Project)
                     .SelectMany(x => x.Plcs.ToObservableChangeSet().TransformMany(p => p.Root.Variables).Select(_ => true)))
-                .Merge(OpenCommand.Select(_ => false))
+                .Merge(OpenFileCommand.Select(_ => false))
                 .Merge(SaveCommand.Select(_ => false))
                 .Merge(SaveAsCommand.Select(x => !x));
 
@@ -91,8 +93,6 @@ namespace PlcMonitor.UI.ViewModels
 
         private async Task Open()
         {
-            var mapper = Locator.Current.GetService<IMapperService>();
-            var storage = Locator.Current.GetService<IStorageService>();
             var mainWindow = Locator.Current.GetService<MainWindow>();
 
             var dialog = new OpenFileDialog() {
@@ -103,7 +103,15 @@ namespace PlcMonitor.UI.ViewModels
             var fileNames = await dialog.ShowAsync(mainWindow);
             if (fileNames?.FirstOrDefault() == null) return;
 
-            var file = new FileInfo(fileNames[0]);
+            await OpenFileCommand.Execute(fileNames[0]);
+        }
+
+        private async Task OpenFile(string fileName)
+        {
+            var mapper = Locator.Current.GetService<IMapperService>();
+            var storage = Locator.Current.GetService<IStorageService>();
+
+            var file = new FileInfo(fileName);
             var project = mapper.MapFromStorage(file, await storage.Load(file));
             Project = project;
         }
