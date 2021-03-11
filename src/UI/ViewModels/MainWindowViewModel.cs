@@ -46,8 +46,6 @@ namespace PlcMonitor.UI.ViewModels
 
         public IObservable<bool> HasChanges { get; }
 
-        public IObservable<bool> IsDialogOpen { get; }
-
         public ViewModelActivator Activator { get; } = new ViewModelActivator();
 
         public MainWindowViewModel(ProjectViewModel? projectViewModel, ProjectViewModelFactory projectViewModelFactory)
@@ -70,8 +68,6 @@ namespace PlcMonitor.UI.ViewModels
                 .Merge(OpenCommand.Select(_ => false))
                 .Merge(SaveCommand.Select(_ => false))
                 .Merge(SaveAsCommand.Select(x => !x));
-
-            IsDialogOpen = this.WhenAnyValue(x => x.DialogContent).Select(c => c != null);
 
             this.WhenActivated(disposables => {
                 this.WhenAnyValue(x => x.DialogContent)
