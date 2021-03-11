@@ -12,6 +12,7 @@ using PlcMonitor.UI.Controls;
 using PlcMonitor.UI.Models.Plcs;
 using PlcMonitor.UI.Models.Plcs.Modbus;
 using PlcMonitor.UI.Models.Plcs.S7;
+using PlcMonitor.UI.ValueConverters;
 using PlcMonitor.UI.ViewModels;
 using ReactiveUI;
 
@@ -115,7 +116,18 @@ namespace PlcMonitor.UI.Views
                     break;
             }
 
-            yield return Col("Value", "State.Value", true);
+            yield return new DataGridTextColumn
+            {
+                Header = "Value",
+                Binding = new Binding("State.Value")
+                {
+                    Mode = BindingMode.OneWay,
+                    Converter = new ArrayJoinConverter()
+                },
+                Width = new DataGridLength(1, DataGridLengthUnitType.Auto),
+                IsReadOnly = true,
+            };
+
             yield return Col("Last change", "State.LastChange.DateTime", true);
             yield return Col("Last read", "State.LastRead^.DateTime", true);
         }
