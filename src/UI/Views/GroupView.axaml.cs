@@ -49,6 +49,8 @@ namespace PlcMonitor.UI.Views
                     .Subscribe(items => ViewModel.SelectedVariables.RemoveMany(items))
                     .DisposeWith(disposables);
 
+                ViewModel.SelectedVariables.Clear();
+
                 _variables.Columns.AddRange(GenerateColumns(ViewModel.Plc.Plc));
             });
         }
