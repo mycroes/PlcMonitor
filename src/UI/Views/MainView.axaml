@@ -26,17 +26,17 @@
             </ExperimentalAcrylicBorder>
         </DockPanel>
 
-        <DockPanel HorizontalAlignment="Stretch" VerticalAlignment="Top" IsHitTestVisible="{Binding DialogContent, Converter={x:Static ObjectConverters.IsNull}}">
-            <Menu DockPanel.Dock="Left">
+        <DockPanel HorizontalAlignment="Stretch" VerticalAlignment="Top">
+            <Menu x:Name="Menu" DockPanel.Dock="Left" IsEnabled="{Binding DialogContent, Converter={x:Static ObjectConverters.IsNull}}">
                 <MenuItem Header="_File">
-                    <MenuItem Header="_New" InputGesture="Ctrl+N" HotKey="Ctrl+N" Command="{Binding NewCommand}" />
+                    <MenuItem Header="_New" IsEnabled="{Binding #Menu.IsEnabled}" InputGesture="Ctrl+N" HotKey="Ctrl+N" Command="{Binding NewCommand}" />
                     <Separator />
-                    <MenuItem Header="_Open..." InputGesture="Ctrl+O" HotKey="Ctrl+O" Command="{Binding OpenCommand}" />
+                    <MenuItem Header="_Open..." IsEnabled="{Binding #Menu.IsEnabled}" InputGesture="Ctrl+O" HotKey="Ctrl+O" Command="{Binding OpenCommand}" />
                     <Separator />
-                    <MenuItem Header="_Save" InputGesture="Ctrl+S" HotKey="Ctrl+S" Command="{Binding SaveCommand}" />
-                    <MenuItem Header="Save _As..." InputGesture="Ctrl+Shift+S" HotKey="Ctrl+Shift+S" Command="{Binding SaveAsCommand}" />
+                    <MenuItem Header="_Save" IsEnabled="{Binding #Menu.IsEnabled}" InputGesture="Ctrl+S" HotKey="Ctrl+S" Command="{Binding SaveCommand}" />
+                    <MenuItem Header="Save _As..." IsEnabled="{Binding #Menu.IsEnabled}" InputGesture="Ctrl+Shift+S" HotKey="Ctrl+Shift+S" Command="{Binding SaveAsCommand}" />
                     <Separator />
-                    <MenuItem Header="E_xit" />
+                    <MenuItem Header="E_xit" IsEnabled="{Binding #Menu.IsEnabled}" />
                 </MenuItem>
             </Menu>
 
