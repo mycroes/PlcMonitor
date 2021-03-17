@@ -46,7 +46,7 @@ namespace PlcMonitor.UI.ViewModels
             });
 
             AddCommand = ReactiveCommand.Create<VariableViewModel>(Add);
-            ReadCommand = ReactiveCommand.CreateFromTask(() => plc.Read(this));
+            ReadCommand = ReactiveCommand.CreateFromTask(() => plc.Read(Variables));
             UpdateCommand = ReactiveCommand.Create<VariableViewModel>(Update);
 
             var canWrite = SelectedVariables.WhenValueChanged(x => x.Count).Select(c => c > 0);

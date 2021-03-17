@@ -19,6 +19,13 @@ namespace PlcMonitor.UI.ViewModels
         public PlcViewModel Plc { get; }
         public ObservableCollectionExtended<WriteVariableValueViewModel> VariableValues { get; }
 
+        private bool _readWritten = true;
+        public bool ReadWritten
+        {
+            get => _readWritten;
+            set => this.RaiseAndSetIfChanged(ref _readWritten, value);
+        }
+
         public WriteViewModel(PlcViewModel plc, IEnumerable<VariableViewModel> variables)
         {
             Plc = plc;
@@ -29,6 +36,8 @@ namespace PlcMonitor.UI.ViewModels
 
             WriteCommand = ReactiveCommand.CreateFromTask(async () => {
                 await plc.Write(this);
+                if (ReadWritten) await plc.Read(VariableValues.Select(x => x.Variable));
+
                 await CloseCommand.Execute();
             });
         }

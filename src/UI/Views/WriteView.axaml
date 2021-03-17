@@ -32,6 +32,8 @@
             </ItemsControl.ItemTemplate>
         </ItemsControl>
 
+        <CheckBox IsChecked="{Binding ReadWritten}">Read values from PLC after write</CheckBox>
+
         <StackPanel Orientation="Horizontal" Margin="0 10 0 0">
             <Button Command="{Binding WriteCommand}">Write to PLC</Button>
             <Button Command="{Binding CloseCommand}">Cancel</Button>

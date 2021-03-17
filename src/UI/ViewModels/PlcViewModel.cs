@@ -1,9 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reactive;
 using System.Reactive.Concurrency;
-using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using Avalonia.Controls.Notifications;
@@ -47,10 +45,10 @@ namespace PlcMonitor.UI.ViewModels
             return _plcInteractionManager.CreateVariable(Plc);
         }
 
-        public async Task Read(GroupViewModel group) {
+        public async Task Read(IEnumerable<VariableViewModel> variables) {
             try
             {
-                await _plcInteractionManager.Read(Plc, group.Variables);
+                await _plcInteractionManager.Read(Plc, variables);
             }
             catch (Exception e)
             {
