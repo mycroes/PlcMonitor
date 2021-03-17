@@ -54,7 +54,7 @@ namespace PlcMonitor.UI.ViewModels
             _project = projectViewModel ?? projectViewModelFactory.Invoke(null, Enumerable.Empty<PlcViewModel>());
             _projectViewModelFactory = projectViewModelFactory;
 
-            var canSave = this.WhenAnyValue(x => x.Project).Select(p => p.File is {});
+            var canSave = this.WhenAnyValue(x => x.Project.File).Select(x => x is {});
 
             NewCommand = ReactiveCommand.Create(New);
             OpenCommand = ReactiveCommand.CreateFromTask(Open);
