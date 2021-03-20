@@ -131,7 +131,7 @@ namespace PlcMonitor.UI.Services
 
         private static void ParseReadValues(Bundle<ModbusVariableViewModel> bundle, ushort[] data)
         {
-            var order = new byte[] { 7, 6, 5, 4, 3, 2, 1, 0 }.AsSpan();
+            var order = new byte[] { 0, 1, 2, 3, 4, 5, 6, 7 }.AsSpan();
             var input = data.AsSpan();
 
             foreach (var v in bundle.Elements)
@@ -141,13 +141,13 @@ namespace PlcMonitor.UI.Services
                 {
                     TypeCode.Byte => DataConverter.ConvertToRuntime<byte[]>(bytes, order),
                     TypeCode.Double => DataConverter.ConvertToRuntime<double[]>(bytes, order),
-                    TypeCode.Int16 => DataConverter.ConvertToRuntime<short[]>(bytes, order.Slice(6)),
-                    TypeCode.Int32 => DataConverter.ConvertToRuntime<int[]>(bytes, order.Slice(4)),
+                    TypeCode.Int16 => DataConverter.ConvertToRuntime<short[]>(bytes, order),
+                    TypeCode.Int32 => DataConverter.ConvertToRuntime<int[]>(bytes, order),
                     TypeCode.Int64 => DataConverter.ConvertToRuntime<long[]>(bytes, order),
                     TypeCode.SByte => DataConverter.ConvertToRuntime<sbyte[]>(bytes, order),
-                    TypeCode.Single => DataConverter.ConvertToRuntime<float[]>(bytes, order.Slice(4)),
-                    TypeCode.UInt16 => DataConverter.ConvertToRuntime<ushort[]>(bytes, order.Slice(6)),
-                    TypeCode.UInt32 => DataConverter.ConvertToRuntime<uint[]>(bytes, order.Slice(4)),
+                    TypeCode.Single => DataConverter.ConvertToRuntime<float[]>(bytes, order),
+                    TypeCode.UInt16 => DataConverter.ConvertToRuntime<ushort[]>(bytes, order),
+                    TypeCode.UInt32 => DataConverter.ConvertToRuntime<uint[]>(bytes, order),
                     TypeCode.UInt64 => DataConverter.ConvertToRuntime<ulong[]>(bytes, order),
                     _ => throw new ArgumentException($"Unsupported type {v.TypeCode}")
                 } : v.TypeCode switch
@@ -155,13 +155,13 @@ namespace PlcMonitor.UI.Services
                     // First case has explicit object cast to avoid implicit cast to double
                     TypeCode.Byte => (object) DataConverter.ConvertToRuntime<byte>(bytes, order),
                     TypeCode.Double => DataConverter.ConvertToRuntime<double>(bytes, order),
-                    TypeCode.Int16 => DataConverter.ConvertToRuntime<short>(bytes, order.Slice(6)),
-                    TypeCode.Int32 => DataConverter.ConvertToRuntime<int>(bytes, order.Slice(4)),
+                    TypeCode.Int16 => DataConverter.ConvertToRuntime<short>(bytes, order),
+                    TypeCode.Int32 => DataConverter.ConvertToRuntime<int>(bytes, order),
                     TypeCode.Int64 => DataConverter.ConvertToRuntime<long>(bytes, order),
                     TypeCode.SByte => DataConverter.ConvertToRuntime<sbyte>(bytes, order),
-                    TypeCode.Single => DataConverter.ConvertToRuntime<float>(bytes, order.Slice(4)),
-                    TypeCode.UInt16 => DataConverter.ConvertToRuntime<ushort>(bytes, order.Slice(6)),
-                    TypeCode.UInt32 => DataConverter.ConvertToRuntime<uint>(bytes, order.Slice(4)),
+                    TypeCode.Single => DataConverter.ConvertToRuntime<float>(bytes, order),
+                    TypeCode.UInt16 => DataConverter.ConvertToRuntime<ushort>(bytes, order),
+                    TypeCode.UInt32 => DataConverter.ConvertToRuntime<uint>(bytes, order),
                     TypeCode.UInt64 => DataConverter.ConvertToRuntime<ulong>(bytes, order),
                     _ => throw new ArgumentException($"Unsupported type {v.TypeCode}")
                 };
