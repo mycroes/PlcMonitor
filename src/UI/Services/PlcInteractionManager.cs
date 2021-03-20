@@ -124,11 +124,49 @@ namespace PlcMonitor.UI.Services
                 foreach (var bundle in BundleVariables(group, maxGap, v => v.Address, v => GetNativeLength(v, sizeof(ushort))))
                 {
                     var res = await plc.Schedule(async conn => await read(((ModbusPlcConnection)conn).ModbusMaster, bundle))!;
-                    foreach (var v in bundle.Elements)
-                    {
-                        v.PushValue(new ReceivedValue(ReadValue(res, v.Address - bundle.Start, v.TypeCode, v.Length), DateTimeOffset.Now));
-                    }
+                    ParseReadValues(bundle, res);
                 }
+            }
+        }
+
+        private static void ParseReadValues(Bundle<ModbusVariableViewModel> bundle, ushort[] data)
+        {
+            var order = new byte[] { 7, 6, 5, 4, 3, 2, 1, 0 }.AsSpan();
+            var input = data.AsSpan();
+
+            foreach (var v in bundle.Elements)
+            {
+                var bytes = MemoryMarshal.Cast<ushort, byte>(input.Slice(v.Address - bundle.Start));
+                object value = v.Length > 1 ? v.TypeCode switch
+                {
+                    TypeCode.Byte => DataConverter.ConvertToRuntime<byte[]>(bytes, order),
+                    TypeCode.Double => DataConverter.ConvertToRuntime<double[]>(bytes, order),
+                    TypeCode.Int16 => DataConverter.ConvertToRuntime<short[]>(bytes, order.Slice(6)),
+                    TypeCode.Int32 => DataConverter.ConvertToRuntime<int[]>(bytes, order.Slice(4)),
+                    TypeCode.Int64 => DataConverter.ConvertToRuntime<long[]>(bytes, order),
+                    TypeCode.SByte => DataConverter.ConvertToRuntime<sbyte[]>(bytes, order),
+                    TypeCode.Single => DataConverter.ConvertToRuntime<float[]>(bytes, order.Slice(4)),
+                    TypeCode.UInt16 => DataConverter.ConvertToRuntime<ushort[]>(bytes, order.Slice(6)),
+                    TypeCode.UInt32 => DataConverter.ConvertToRuntime<uint[]>(bytes, order.Slice(4)),
+                    TypeCode.UInt64 => DataConverter.ConvertToRuntime<ulong[]>(bytes, order),
+                    _ => throw new ArgumentException($"Unsupported type {v.TypeCode}")
+                } : v.TypeCode switch
+                {
+                    // First case has explicit object cast to avoid implicit cast to double
+                    TypeCode.Byte => (object) DataConverter.ConvertToRuntime<byte>(bytes, order),
+                    TypeCode.Double => DataConverter.ConvertToRuntime<double>(bytes, order),
+                    TypeCode.Int16 => DataConverter.ConvertToRuntime<short>(bytes, order.Slice(6)),
+                    TypeCode.Int32 => DataConverter.ConvertToRuntime<int>(bytes, order.Slice(4)),
+                    TypeCode.Int64 => DataConverter.ConvertToRuntime<long>(bytes, order),
+                    TypeCode.SByte => DataConverter.ConvertToRuntime<sbyte>(bytes, order),
+                    TypeCode.Single => DataConverter.ConvertToRuntime<float>(bytes, order.Slice(4)),
+                    TypeCode.UInt16 => DataConverter.ConvertToRuntime<ushort>(bytes, order.Slice(6)),
+                    TypeCode.UInt32 => DataConverter.ConvertToRuntime<uint>(bytes, order.Slice(4)),
+                    TypeCode.UInt64 => DataConverter.ConvertToRuntime<ulong>(bytes, order),
+                    _ => throw new ArgumentException($"Unsupported type {v.TypeCode}")
+                };
+
+                v.PushValue(new ReceivedValue(value, DateTimeOffset.Now));
             }
         }
 
@@ -154,32 +192,6 @@ namespace PlcMonitor.UI.Services
 
                     await plc.Schedule(async conn => await write(((ModbusPlcConnection)conn).ModbusMaster, (ushort)bundle.Start, data));
                 }
-            }
-        }
-
-        private object ReadValue(ushort[] data, int offset, TypeCode typeCode, int length)
-        {
-            // Hack: move span and bytes outside of ReadValue
-            var span = data.AsSpan().Slice(offset);
-            var bytes = MemoryMarshal.Cast<ushort, byte>(span);
-
-            // Hack: no array support
-            switch (typeCode)
-            {
-                case TypeCode.Boolean:
-                    return bytes[0] > 1;
-                case TypeCode.Byte:
-                    return bytes[0];
-                case TypeCode.Int16:
-                    return (short)((ushort)(bytes[0] << 8) | bytes[1]);
-                case TypeCode.Int32:
-                    return bytes[0] << 24 | bytes[1] << 16 | bytes[2] << 24 | bytes[3];
-                case TypeCode.UInt16:
-                    return (ushort)(bytes[0] << 8 | bytes[1]);
-                case TypeCode.UInt32:
-                    return (uint)(bytes[0] << 24 | bytes[1] << 16 | bytes[2] << 24 | bytes[3]);
-                default:
-                    throw new ArgumentOutOfRangeException($"Unsupported conversion for TypeCode {typeCode}.");
             }
         }
 
