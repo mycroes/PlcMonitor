@@ -8,6 +8,8 @@ using PlcMonitor.UI.Models.Plcs.S7;
 using PlcMonitor.UI.Models.Plcs.Modbus;
 using PlcMonitor.UI.ViewModels;
 using Sally7;
+using System.Runtime.InteropServices;
+using NModbus;
 
 public class PlcInteractionManager : IPlcInteractionManager
 {
@@ -25,6 +27,8 @@ public class PlcInteractionManager : IPlcInteractionManager
     {
         switch (plc)
         {
+            case ModbusPlc modbusPlc:
+                return ReadModbus(modbusPlc, variables.Cast<ModbusVariableViewModel>());
             case S7Plc s7plc:
                 return ReadS7(s7plc, variables.Cast<S7VariableViewModel>());
         }
@@ -41,11 +45,205 @@ public class PlcInteractionManager : IPlcInteractionManager
     {
         switch (plc)
         {
+            case ModbusPlc modbusPlc:
+                return WriteModbus(modbusPlc, variableValues.Select(x => (Variable: (ModbusVariableViewModel) x.Key, Value: x.Value)));
             case S7Plc s7plc:
                 return WriteS7(s7plc, variableValues.Select(x => (Variable: (S7VariableViewModel) x.Key, Value: x.Value)));
         }
 
         return Task.CompletedTask;
+    }
+
+    private IEnumerable<Bundle<T>> BundleVariables<T>(IEnumerable<T> input, int maxGap, Func<T, int> startSelector, Func<T, int> lengthSelector)
+    {
+        using (var enumerator = input.OrderBy(startSelector).GetEnumerator())
+        {
+            if (!enumerator.MoveNext()) yield break;
+
+            var variable = enumerator.Current!;
+            var start = startSelector(variable);
+            var end = start + lengthSelector(variable);
+            List<T> variables = new() { variable };
+
+            while (enumerator.MoveNext())
+            {
+                variable = enumerator.Current!;
+                var nextStart = startSelector(variable);
+                var nextEnd = nextStart + lengthSelector(variable);
+                if (nextStart < end + maxGap)
+                {
+                    if (nextEnd > end) end = nextEnd;
+                    variables.Add(variable);
+                }
+                else
+                {
+                    yield return new Bundle<T>(start, end, variables);
+                    start = nextStart;
+                    end = nextEnd;
+                    variables = new() { variable };
+                }
+            }
+
+            if (variables.Any())
+            {
+                yield return new Bundle<T>(start, end, variables);
+            }
+        }
+    }
+
+    private class Bundle<T>
+    {
+        public int Start { get; }
+        public int Length { get; }
+        public IEnumerable<T> Elements { get; }
+
+        public Bundle(in int start, in int length, in IEnumerable<T> elements)
+        {
+            Start = start;
+            Length = length;
+            Elements = elements;
+        }
+    }
+
+    private async Task ReadModbus(ModbusPlc plc, IEnumerable<ModbusVariableViewModel> variables)
+    {
+        const int maxGap = 32;
+        var groups = variables.GroupBy(v => v.ObjectType);
+        foreach (var group in groups)
+        {
+            // Hack, logic only works for holding / input registers
+            Func<IModbusMaster, Bundle<ModbusVariableViewModel>, Task<ushort[]>> read = group.Key switch {
+                ObjectType.HoldingRegister => (m, bundle) => m.ReadHoldingRegistersAsync(plc.UnitId, (ushort) bundle.Start, (ushort) bundle.Length),
+                ObjectType.InputRegister => (m, bundle) => m.ReadInputRegistersAsync(plc.UnitId, (ushort) bundle.Start, (ushort) bundle.Length),
+                _ => throw new ArgumentOutOfRangeException($"No support for reading ObjectType {group.Key}.")
+            };
+
+            foreach (var bundle in BundleVariables(group, maxGap, v => v.Address, v => GetNativeLength(v, sizeof(ushort))))
+            {
+                var res = await plc.Schedule(async conn => await read(((ModbusPlcConnection) conn).ModbusMaster, bundle))!;
+                foreach (var v in bundle.Elements)
+                {
+                    v.PushValue(new ReceivedValue(ReadValue(res, v.Address - bundle.Start, v.TypeCode, v.Length), DateTimeOffset.Now));
+                }
+            }
+        }
+    }
+
+    private async Task WriteModbus(ModbusPlc plc, IEnumerable<(ModbusVariableViewModel variable, object value)> variableValues)
+    {
+        var groups = variableValues.GroupBy(v => v.variable.ObjectType);
+        foreach (var group in groups)
+        {
+            // Hack, logic only works for holding registers
+            Func<IModbusMaster, ushort, ushort[], Task> write = group.Key switch {
+                ObjectType.HoldingRegister => (m, start, data) => m.WriteMultipleRegistersAsync(plc.UnitId, start, data),
+                _ => throw new ArgumentOutOfRangeException($"No support for writing ObjectType {group.Key}.")
+            };
+
+            foreach (var bundle in BundleVariables(group, 0, vv => vv.variable.Address, vv => GetNativeLength(vv.variable, sizeof(ushort))))
+            {
+                var data = new ushort[bundle.Length];
+                foreach (var (variable, value) in bundle.Elements)
+                {
+                    WriteValue(data, variable.Address - bundle.Start, variable.TypeCode, variable.Length, value);
+                }
+
+                await plc.Schedule(async conn => await write(((ModbusPlcConnection) conn).ModbusMaster, (ushort) bundle.Start, data));
+            }
+        }
+    }
+
+    private object ReadValue(ushort[] data, int offset, TypeCode typeCode, int length)
+    {
+        // Hack: move span and bytes outside of ReadValue
+        var span = data.AsSpan().Slice(offset);
+        var bytes = MemoryMarshal.Cast<ushort, byte>(span);
+
+        // Hack: no array support
+        switch (typeCode)
+        {
+            case TypeCode.Boolean:
+                return bytes[0] > 1;
+            case TypeCode.Byte:
+                return bytes[0];
+            case TypeCode.Int16:
+                return (short) ((ushort) (bytes[0] << 8) | bytes[1]);
+            case TypeCode.Int32:
+                return bytes[0] << 24 | bytes[1] << 16 | bytes[2] << 24 | bytes[3];
+            case TypeCode.UInt16:
+                return (ushort) (bytes[0] << 8 | bytes[1]);
+            case TypeCode.UInt32:
+                return (uint) (bytes[0] << 24 | bytes[1] << 16 | bytes[2] << 24 | bytes[3]);
+            default:
+                throw new ArgumentOutOfRangeException($"Unsupported conversion for TypeCode {typeCode}.");
+        }
+    }
+
+    private void WriteValue(ushort[] data, int offset, TypeCode typeCode, int length, object value)
+    {
+        // Hack: move span and bytes outside of ReadValue
+        var span = data.AsSpan().Slice(offset);
+        var bytes = MemoryMarshal.Cast<ushort, byte>(span);
+
+        // Hack: no array support
+        switch (typeCode)
+        {
+            case TypeCode.Boolean:
+                bytes[0] = ((bool) value) ? 1 : 0;
+                break;
+            case TypeCode.Byte:
+                bytes[0] = (byte) value;
+                break;
+            case TypeCode.Int16:
+                bytes[0] = (byte) (((short) value) >> 8);
+                bytes[1] = (byte) (short) value;
+                break;
+            case TypeCode.Int32:
+                bytes[0] = (byte) (((int) value) >> 24);
+                bytes[1] = (byte) (((int) value) >> 16);
+                bytes[2] = (byte) (((int) value) >> 8);
+                bytes[3] = (byte) (int) value;
+                break;
+            case TypeCode.UInt16:
+                bytes[0] = (byte) (((ushort) value) >> 8);
+                bytes[1] = (byte) (ushort) value;
+                break;
+            case TypeCode.UInt32:
+                bytes[0] = (byte) (((uint) value) >> 24);
+                bytes[1] = (byte) (((uint) value) >> 16);
+                bytes[2] = (byte) (((uint) value) >> 8);
+                bytes[3] = (byte) (uint) value;
+                break;
+            default:
+                throw new ArgumentOutOfRangeException($"Unsupported conversion for TypeCode {typeCode}.");
+        }
+    }
+
+    private int GetNativeLength(VariableViewModel variable, int nativeSize)
+    {
+        return (GetByteLength(variable) + (nativeSize - 1)) / nativeSize;
+    }
+
+    private int GetByteLength(VariableViewModel variable)
+    {
+        int Len(int elementSize) => variable.Length * elementSize;
+
+        return variable.TypeCode switch
+        {
+            TypeCode.Boolean => variable.Length + 7 / 8,
+            TypeCode.Byte => variable.Length,
+            TypeCode.Double => Len(sizeof(double)),
+            TypeCode.Int16 => Len(sizeof(short)),
+            TypeCode.Int32 => Len(sizeof(int)),
+            TypeCode.Int64 => Len(sizeof(long)),
+            TypeCode.SByte => variable.Length,
+            TypeCode.Single => Len(sizeof(float)),
+            TypeCode.String => variable.Length,
+            TypeCode.UInt16 => Len(sizeof(ushort)),
+            TypeCode.UInt32 => Len(sizeof(uint)),
+            TypeCode.UInt64 => Len(sizeof(ulong)),
+            _ => throw new ArgumentOutOfRangeException(nameof(variable))
+        };
     }
 
     private async Task ReadS7(S7Plc plc, IEnumerable<S7VariableViewModel> variables)
