@@ -41,6 +41,16 @@ namespace PlcMonitor.UI.Models.Plcs
              await job;
         }
 
+        public async Task<T> Schedule<T>(Func<IPlcConnection, Task<T>> fn)
+        {
+            T result = default!;
+            var job = new Job(async conn => result = await fn.Invoke(conn).ConfigureAwait(false));
+            _jobs.OnNext(job);
+            await job;
+
+            return result;
+        }
+
         public abstract IPlcConnection CreateConnection();
 
         public void Dispose()
