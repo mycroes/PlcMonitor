@@ -170,6 +170,96 @@ namespace PlcMonitor.UI.Services
             }
         }
 
+        private static ushort[] CreateWriteData(Bundle<(ModbusVariableViewModel variable, object value)> bundle)
+        {
+            var order = new byte[] { 0, 1, 2, 3, 4, 5, 6, 7 }.AsSpan();
+            var data = new ushort[bundle.Length];
+            var output = data.AsSpan();
+
+            foreach (var (v, value) in bundle.Elements)
+            {
+                var bytes = MemoryMarshal.Cast<ushort, byte>(output.Slice(v.Address - bundle.Start));
+                if (v.Length > 1)
+                {
+                    switch (v.TypeCode)
+                    {
+                        case TypeCode.Byte:
+                            DataConverter.ConvertToDevice<byte[]>(bytes, order, (byte[]) value);
+                            break;
+                        case TypeCode.Double:
+                            DataConverter.ConvertToDevice<double[]>(bytes, order, (double[]) value);
+                            break;
+                        case TypeCode.Int16:
+                            DataConverter.ConvertToDevice<short[]>(bytes, order, (short[]) value);
+                            break;
+                        case TypeCode.Int32:
+                            DataConverter.ConvertToDevice<int[]>(bytes, order, (int[]) value);
+                            break;
+                        case TypeCode.Int64:
+                            DataConverter.ConvertToDevice<long[]>(bytes, order, (long[]) value);
+                            break;
+                        case TypeCode.SByte:
+                            DataConverter.ConvertToDevice<sbyte[]>(bytes, order, (sbyte[]) value);
+                            break;
+                        case TypeCode.Single:
+                            DataConverter.ConvertToDevice<float[]>(bytes, order, (float[]) value);
+                            break;
+                        case TypeCode.UInt16:
+                            DataConverter.ConvertToDevice<ushort[]>(bytes, order, (ushort[]) value);
+                            break;
+                        case TypeCode.UInt32:
+                            DataConverter.ConvertToDevice<uint[]>(bytes, order, (uint[]) value);
+                            break;
+                        case TypeCode.UInt64:
+                            DataConverter.ConvertToDevice<ulong[]>(bytes, order, (ulong[]) value);
+                            break;
+                        default:
+                            throw new ArgumentException($"Unsupported type {v.TypeCode}");
+                    }
+                }
+                else
+                {
+                    switch (v.TypeCode)
+                    {
+                        case TypeCode.Byte:
+                            DataConverter.ConvertToDevice<byte>(bytes, order, (byte) value);
+                            break;
+                        case TypeCode.Double:
+                            DataConverter.ConvertToDevice<double>(bytes, order, (double) value);
+                            break;
+                        case TypeCode.Int16:
+                            DataConverter.ConvertToDevice<short>(bytes, order, (short) value);
+                            break;
+                        case TypeCode.Int32:
+                            DataConverter.ConvertToDevice<int>(bytes, order, (int) value);
+                            break;
+                        case TypeCode.Int64:
+                            DataConverter.ConvertToDevice<long>(bytes, order, (long) value);
+                            break;
+                        case TypeCode.SByte:
+                            DataConverter.ConvertToDevice<sbyte>(bytes, order, (sbyte) value);
+                            break;
+                        case TypeCode.Single:
+                            DataConverter.ConvertToDevice<float>(bytes, order, (float) value);
+                            break;
+                        case TypeCode.UInt16:
+                            DataConverter.ConvertToDevice<ushort>(bytes, order, (ushort) value);
+                            break;
+                        case TypeCode.UInt32:
+                            DataConverter.ConvertToDevice<uint>(bytes, order, (uint) value);
+                            break;
+                        case TypeCode.UInt64:
+                            DataConverter.ConvertToDevice<ulong>(bytes, order, (ulong) value);
+                            break;
+                        default:
+                            throw new ArgumentException($"Unsupported type {v.TypeCode}");
+                    }
+                }
+            }
+
+            return data;
+        }
+
         private async Task WriteModbus(ModbusPlc plc, IEnumerable<(ModbusVariableViewModel variable, object value)> variableValues)
         {
             var groups = variableValues.GroupBy(v => v.variable.ObjectType);
@@ -184,54 +274,9 @@ namespace PlcMonitor.UI.Services
 
                 foreach (var bundle in BundleVariables(group, 0, vv => vv.variable.Address, vv => GetNativeLength(vv.variable, sizeof(ushort))))
                 {
-                    var data = new ushort[bundle.Length];
-                    foreach (var (variable, value) in bundle.Elements)
-                    {
-                        WriteValue(data, variable.Address - bundle.Start, variable.TypeCode, variable.Length, value);
-                    }
-
+                    var data = CreateWriteData(bundle);
                     await plc.Schedule(async conn => await write(((ModbusPlcConnection)conn).ModbusMaster, (ushort)bundle.Start, data));
                 }
-            }
-        }
-
-        private void WriteValue(ushort[] data, int offset, TypeCode typeCode, int length, object value)
-        {
-            // Hack: move span and bytes outside of ReadValue
-            var span = data.AsSpan().Slice(offset);
-            var bytes = MemoryMarshal.Cast<ushort, byte>(span);
-
-            // Hack: no array support
-            switch (typeCode)
-            {
-                case TypeCode.Boolean:
-                    bytes[0] = ((bool)value) ? 1 : 0;
-                    break;
-                case TypeCode.Byte:
-                    bytes[0] = (byte)value;
-                    break;
-                case TypeCode.Int16:
-                    bytes[0] = (byte)(((short)value) >> 8);
-                    bytes[1] = (byte)(short)value;
-                    break;
-                case TypeCode.Int32:
-                    bytes[0] = (byte)(((int)value) >> 24);
-                    bytes[1] = (byte)(((int)value) >> 16);
-                    bytes[2] = (byte)(((int)value) >> 8);
-                    bytes[3] = (byte)(int)value;
-                    break;
-                case TypeCode.UInt16:
-                    bytes[0] = (byte)(((ushort)value) >> 8);
-                    bytes[1] = (byte)(ushort)value;
-                    break;
-                case TypeCode.UInt32:
-                    bytes[0] = (byte)(((uint)value) >> 24);
-                    bytes[1] = (byte)(((uint)value) >> 16);
-                    bytes[2] = (byte)(((uint)value) >> 8);
-                    bytes[3] = (byte)(uint)value;
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException($"Unsupported conversion for TypeCode {typeCode}.");
             }
         }
 
