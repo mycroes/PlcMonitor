@@ -170,14 +170,17 @@ namespace PlcMonitor.UI.Services
             }
         }
 
-        private static ushort[] CreateWriteData(Bundle<(ModbusVariableViewModel variable, object value)> bundle)
+        private static ushort[] CreateWriteData(Bundle<(ModbusVariableViewModel variable, object? value)> bundle)
         {
             var order = new byte[] { 0, 1, 2, 3, 4, 5, 6, 7 }.AsSpan();
             var data = new ushort[bundle.Length];
             var output = data.AsSpan();
 
-            foreach (var (v, value) in bundle.Elements)
+            foreach (var (v, val) in bundle.Elements)
             {
+                if (val == null) throw new Exception($"Value can't be null.");
+
+                var value = val!;
                 var bytes = MemoryMarshal.Cast<ushort, byte>(output.Slice(v.Address - bundle.Start));
                 if (v.Length > 1)
                 {
@@ -260,7 +263,7 @@ namespace PlcMonitor.UI.Services
             return data;
         }
 
-        private async Task WriteModbus(ModbusPlc plc, IEnumerable<(ModbusVariableViewModel variable, object value)> variableValues)
+        private async Task WriteModbus(ModbusPlc plc, IEnumerable<(ModbusVariableViewModel variable, object? value)> variableValues)
         {
             var groups = variableValues.GroupBy(v => v.variable.ObjectType);
             foreach (var group in groups)
@@ -324,7 +327,7 @@ namespace PlcMonitor.UI.Services
             }
         }
 
-        private Task WriteS7(S7Plc plc, IEnumerable<(S7VariableViewModel variable, object value)> variableValues)
+        private Task WriteS7(S7Plc plc, IEnumerable<(S7VariableViewModel variable, object? value)> variableValues)
         {
             void SetValue(IDataItem dataItem, object? value)
             {
