@@ -27,6 +27,7 @@
                     <Button Command="{Binding ReadCommand}">Read</Button>
                     <Button Command="{Binding WriteCommand}">Write</Button>
                     <Button Command="{Binding AddCommand}">Add variable</Button>
+                    <Button Command="{Binding DeleteCommand}">Delete variable(s)</Button>
                     <Button Command="{Binding AddGroupCommand}">Add nested group</Button>
                 </StackPanel>
             </Border>

@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
 using DynamicData.Binding;
@@ -27,6 +29,8 @@ namespace PlcMonitor.UI.ViewModels
 
         public ReactiveCommand<Unit, GroupViewModel> AddGroupCommand { get; }
 
+        public ReactiveCommand<Unit, Unit> DeleteCommand { get; }
+
         public ReactiveCommand<Unit, Unit> ReadCommand { get; }
 
         public ReactiveCommand<VariableViewModel, Unit> UpdateCommand { get; }
@@ -49,8 +53,9 @@ namespace PlcMonitor.UI.ViewModels
             ReadCommand = ReactiveCommand.CreateFromTask(() => plc.Read(Variables));
             UpdateCommand = ReactiveCommand.Create<VariableViewModel>(Update);
 
-            var canWrite = SelectedVariables.WhenValueChanged(x => x.Count).Select(c => c > 0);
-            WriteCommand = ReactiveCommand.CreateFromTask(() => showDialog(new WriteViewModel(Plc, SelectedVariables)), canWrite);
+            var hasSelection = SelectedVariables.WhenValueChanged(x => x.Count).Select(c => c > 0);
+            DeleteCommand = ReactiveCommand.Create(() => Delete(SelectedVariables.ToList()), hasSelection);
+            WriteCommand = ReactiveCommand.CreateFromTask(() => showDialog(new WriteViewModel(Plc, SelectedVariables)), hasSelection);
         }
 
         private VariableViewModel Add()
@@ -59,6 +64,14 @@ namespace PlcMonitor.UI.ViewModels
             Variables.Add(variable);
 
             return variable;
+        }
+
+        private void Delete(IEnumerable<VariableViewModel> variables)
+        {
+            foreach (var variable in variables)
+            {
+                Variables.Remove(variable);
+            }
         }
 
         private void Update(VariableViewModel variable)
