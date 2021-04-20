@@ -167,6 +167,7 @@ namespace PlcMonitor.UI.Services
 
             return Unsafe.As<TElement[], T>(ref arr);
         }
+
         private static void Format<T, TElement>(Span<byte> data, T value, Writer<TElement> writer, bool isArray)
             where TElement : struct
         {
