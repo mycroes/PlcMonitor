@@ -79,7 +79,7 @@ namespace PlcMonitor.UI.Services
                     }
                     else
                     {
-                        yield return new Bundle<T>(start, end, variables);
+                        yield return new Bundle<T>(start, end - start, variables);
                         start = nextStart;
                         end = nextEnd;
                         variables = new() { variable };
@@ -88,7 +88,7 @@ namespace PlcMonitor.UI.Services
 
                 if (variables.Any())
                 {
-                    yield return new Bundle<T>(start, end, variables);
+                    yield return new Bundle<T>(start, end - start, variables);
                 }
             }
         }
